@@ -1,14 +1,9 @@
 # Project
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
-
-As the maintainer of this project, please make a few updates:
-
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## Integration
+We provide both debug and release aar for integration.
+If you want to integrate Cross-Device SDK into your project, please download [crossdevicesdk-publiclib-2.24011.26.0-debug.aar](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0-debug.aar) and [crossdevicesdk-publiclib-2.24011.26.0-release.aar](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0-release.aar) then add them to your project.
+For detailed integration guidance, download the [documentation zip file](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0.zip) and unzip it, open index.html in your browser. Then you can view the full SDK kotlin documentation.
 
 ## Contributing
 
