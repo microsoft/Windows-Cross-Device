@@ -2,7 +2,7 @@
 
 ## Integration
 We provide both debug and release aar for integration.
-If you want to integrate Cross-Device SDK into your project, please download [crossdevicesdk-publiclib-2.24011.26.0-debug.aar](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0-debug.aar) and [crossdevicesdk-publiclib-2.24011.26.0-release.aar](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0-release.aar) then add them to your project.
+If you want to integrate Cross-Device SDK into your project, please download the [debug aar](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0-debug.aar) and the [release aar](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0-release.aar) then add them to your project.
 For detailed integration guidance, download the [documentation zip file](https://github.com/microsoft/Windows-Cross-Device/blob/main/crossdevicesdk-publiclib-2.24011.26.0.zip) and unzip it, open index.html in your browser. Then you can view the full SDK kotlin documentation.
 
 ## Contributing
