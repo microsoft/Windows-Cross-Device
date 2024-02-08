@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":continuity:dokkaHtmlPartial/debug":[],":continuity:dokkaHtmlPartial/main":[],":continuity:dokkaHtmlPartial/release":[]}'
