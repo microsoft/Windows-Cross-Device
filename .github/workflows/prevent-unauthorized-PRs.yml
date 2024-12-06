@@ -1,0 +1,35 @@
+name: Prevent Unauthorized PRs
+
+on:
+  pull_request:
+    types: 
+      - opened
+      - reopened
+      - synchronize
+      - edited
+
+jobs:
+  check-membership:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if user is a member of Microsoft organization
+        id: check_membership
+        run: |
+          USERNAME=${{ github.actor }}
+          USER_TOKEN=${{ secrets.USER_TOKEN }}
+          RESPONSE=$(curl -s -H "Authorization: token $USER_TOKEN" https://api.github.com/orgs/microsoft/memberships/$USERNAME)
+          if echo "$RESPONSE" | jq -e '.state == "active"' > /dev/null; then
+            echo "User is an active member of the Microsoft organization."
+            echo "::set-output name=member::true"
+          else
+            echo "User is not a member of the Microsoft organization."
+            echo "::set-output name=member::false"
+          fi
+
+      - name: Close PR if user is not a member
+        if: steps.check_membership.outputs.member == 'false'
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          curl -X PATCH -H "Authorization: token ${{ secrets.USER_TOKEN }}" \
+          -d '{"state":"closed"}' \
+          https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER
