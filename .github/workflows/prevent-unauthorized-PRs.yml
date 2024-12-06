@@ -9,29 +9,26 @@ on:
       - edited
 
 jobs:
-  check-author:
+  check-membership:
     runs-on: ubuntu-latest
     steps:
-    - name: Check PR Author
-      id: check_author
-      run: |
-        AUTHOR=$(jq -r '.pull_request.user.login' $GITHUB_EVENT_PATH)
-        MEMBERS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/microsoft/members | jq -r '.[].login')
-        if echo "$MEMBERS" | grep -q "$AUTHOR"; then
-          echo "Author is a Microsoft member."
-        else
-          echo "Author is not a Microsoft member."
-          exit 1
-        fi
+      - name: Check if user is a member of Microsoft organization
+        id: check_membership
+        run: |
+          USERNAME=${{ github.actor }}
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/microsoft/memberships/$USERNAME)
+          if echo "$RESPONSE" | jq -e '.state == "active"' > /dev/null; then
+            echo "User is an active member of the Microsoft organization."
+            echo "::set-output name=member::true"
+          else
+            echo "User is not a member of the Microsoft organization."
+            echo "::set-output name=member::false"
+          fi
 
-  close-pr:
-    needs: check-author
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-    - name: Close PR
-      run: |
-        PR_NUMBER=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
-        curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -d '{"state": "closed"}' \
-          "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}"
+      - name: Close PR if user is not a member
+        if: steps.check_membership.outputs.member == 'false'
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -d '{"state":"closed"}' \
+          https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER
