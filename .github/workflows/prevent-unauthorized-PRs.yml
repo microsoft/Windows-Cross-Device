@@ -16,7 +16,8 @@ jobs:
         id: check_membership
         run: |
           USERNAME=${{ github.actor }}
-          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/microsoft/memberships/$USERNAME)
+          USER_TOKEN=${{ secrets.USER_TOKEN }}
+          RESPONSE=$(curl -s -H "Authorization: token $USER_TOKEN" https://api.github.com/orgs/microsoft/memberships/$USERNAME)
           if echo "$RESPONSE" | jq -e '.state == "active"' > /dev/null; then
             echo "User is an active member of the Microsoft organization."
             echo "::set-output name=member::true"
