@@ -3,13 +3,11 @@ trigger:
   batch: true
   branches:
     include:
-      - development
-      - servicing/*
       - main
       - release/*
   paths:
     include:
-      - android/components/WindowsCrossDevice/*
+      - /*
 variables:
   - name: versionMajor
     value: 2
@@ -66,8 +64,8 @@ extends:
               - task: Gradle@2
                 displayName: 'Build Cross Device SDK release aar'
                 inputs:
-                  gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
-                  workingDirectory: android/components/WindowsCrossDevice
+                  gradleWrapperFile: gradlew
+                  workingDirectory: $(Build.Repository.LocalPath)
                   options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleRelease'
@@ -76,8 +74,8 @@ extends:
               - task: Gradle@2
                 displayName: 'Build Cross Device SDK debug aar'
                 inputs:
-                  gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
-                  workingDirectory: android/components/WindowsCrossDevice
+                  gradleWrapperFile: gradlew
+                  workingDirectory: $(Build.Repository.LocalPath)
                   options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleDebug'
@@ -108,8 +106,8 @@ extends:
             - task: Gradle@2
               displayName: 'Kotlin ktlint'
               inputs:
-                gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
-                workingDirectory: android/components/WindowsCrossDevice
+                gradleWrapperFile: gradlew
+                workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'ktlintCheck'
                 options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                 jdkVersionOption: $(jdkVersion)
@@ -118,8 +116,8 @@ extends:
             - task: Gradle@2
               displayName: 'Kotlin detekt'
               inputs:
-                gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
-                workingDirectory: android/components/WindowsCrossDevice
+                gradleWrapperFile: gradlew
+                workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'detekt'
                 options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                 jdkVersionOption: $(jdkVersion)
