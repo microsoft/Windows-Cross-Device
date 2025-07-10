@@ -7,7 +7,7 @@ variables:
   - name: versionMinor
     value: 0
   - name: versionBuild
-    value: format('{0}.{1}.{2}', variables['versionMajor'], variables['versionMinor'], eq(variables['build.reason'], 'PullRequest')), 1)]
+    value: $[counter(format('{0}.{1}.{2}', variables['versionMajor'], variables['versionMinor'], eq(variables['build.reason'], 'PullRequest')), 1)]
   - name: jdkVersion
     value: '1.17'
 name: '$(versionMajor).$(versionMinor).$(versionBuild).$(build.reason)'
