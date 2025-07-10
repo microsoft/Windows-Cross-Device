@@ -5,7 +5,7 @@ variables:
   - name: versionMajor
     value: 2
   - name: versionBuild
-    value: $[counter(format('{0}.{1}.{2}', variables['versionMajor'], eq(variables['build.reason'], 'PullRequest')), 1)]
+    value: $[counter(format('{0}.{1}', variables['versionMajor'], eq(variables['build.reason'], 'PullRequest')), 1)]
   - name: versionRevision
     value: 0
   - name: jdkVersion
