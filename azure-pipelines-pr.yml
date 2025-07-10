@@ -10,14 +10,14 @@ trigger:
       - /*
 variables:
   - name: versionMajor
-    value: 2
-  - name: versionBuild
-    value: $[counter(format('{0}.{1}', variables['versionMajor'], eq(variables['build.reason'], 'PullRequest')), 1)]
-  - name: versionRevision
+    value: 3
+  - name: versionMinor
     value: 0
+  - name: versionBuild
+    value: format('{0}.{1}.{2}', variables['versionMajor'], variables['versionMinor'], eq(variables['build.reason'], 'PullRequest')), 1)]
   - name: jdkVersion
     value: '1.17'
-name: '$(versionMajor).$(versionBuild).$(versionRevision).$(build.reason)'
+name: '$(versionMajor).$(versionMinor).$(versionBuild).$(build.reason)'
 resources:
   repositories:
     - repository: 1esPipelines
@@ -65,7 +65,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleRelease'
                   publishJUnitResults: false
@@ -75,7 +75,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleDebug'
                   publishJUnitResults: false
@@ -108,7 +108,7 @@ extends:
                 gradleWrapperFile: gradlew
                 workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'ktlintCheck'
-                options: '-PbuildNumber=$(versionMajor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                 jdkVersionOption: $(jdkVersion)
               condition: succeededOrFailed()
 
@@ -118,6 +118,6 @@ extends:
                 gradleWrapperFile: gradlew
                 workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'detekt'
-                options: '-PbuildNumber=$(versionMajor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                 jdkVersionOption: $(jdkVersion)
               condition: succeededOrFailed()
