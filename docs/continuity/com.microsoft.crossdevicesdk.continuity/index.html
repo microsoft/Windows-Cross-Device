@@ -1,0 +1,195 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.microsoft.crossdevicesdk.continuity</title>
+</head><body><link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script><script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script><link href="../../styles/style.css" rel="Stylesheet"><link href="../../styles/logo-styles.css" rel="Stylesheet"><link href="../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../scripts/clipboard.js" async></script><script type="text/javascript" src="../../scripts/navigation-loader.js" async></script><script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script><script type="text/javascript" src="../../scripts/main.js" async></script>
+  
+    <div id="container">
+      <div id="leftColumn"><a href="../../index.html">
+            <div id="logo"></div>
+          </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <script type="text/javascript" src="../../scripts/main.js"></script><div id="leftToggler"><span class="icon-toggler"></span></div>
+
+        <div class="main-content" id="content" pageids="Cross Device Continuity SDK Documentation::com.microsoft.crossdevicesdk.continuity////PointingToDeclaration//316627875">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../index.html">Cross Device Continuity SDK Documentation</a>/<a href="index.html">com.microsoft.crossdevicesdk.continuity</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Package com.</span><wbr><span>microsoft.</span><wbr><span>crossdevicesdk.</span><wbr><span>continuity</span></h1>
+            <div class="platform-hinted UnderCoverText" data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><h1 class="">Welcome to the Cross Device Continuity SDK documentation</h1><p class="paragraph">The classes in this API should be used to add support for cross device app context (continuity).</p><h2 class=""> Requirements</h2><ul><li><p class="paragraph">Phone Link (PL)/Mobile devices, Link to Windows (LTW) must support continuity.</p></li><li><p class="paragraph">App to provide context for continuity scenarios need to add meta-data in AndroidManifest</p></li><li><p class="paragraph">AndroidX Annotation</p></li><li><p class="paragraph">MinSdkVersion &gt;= 24</p></li><li><p class="paragraph">Kotlin &gt;= 1.6.0</p></li></ul><h2 class=""> Manifest declarations</h2><h3 class=""> Declare app context type</h3><p class="paragraph">In order to participate in the app context contract an app or context provider service must declare the meta-data for supported type of app context. For example, add resume activity provider meta-data for cross device resume feature:</p><div class="sample-container"><code class="" theme="idea"><pre>&lt;meta-data<br>android:name="com.microsoft.crossdevice.resumeActivityProvider"<br>android:value="true" /&gt;</pre></code></div><p class="paragraph">Below are all the types of meta-data we support for now.</p><div class="sample-container"><code class="" theme="idea"><pre>&lt;meta-data<br>android:name="com.microsoft.crossdevice.browserContextProvider"<br>android:value="true" /&gt;</pre></code></div><div class="sample-container"><code class="" theme="idea"><pre>&lt;meta-data<br>android:name="com.microsoft.crossdevice.resumeActivityProvider"<br>android:value="true" /&gt;</pre></code></div><p class="paragraph">If the app supports more than one type of app context, each type of meta-data needs to be added.</p><h3 class=""> Declare trigger type</h3><p class="paragraph">Apps need to declare the trigger type in the manifest:</p><ul><li><p class="paragraph">If the feature depends on itself to notify LTW, which means it will be enabled on all the devices, the trigger type should be declared as below:</p><div class="sample-container"><code class="" theme="idea"><pre>&lt;application ...<br>  &lt;meta-data<br>  android:name="com.microsoft.crossdevice.trigger.PartnerApp"<br>  android:value="the sum value of all features' binary codes" /&gt;<br>  &lt;/application&gt;</pre></code></div></li><li><p class="paragraph">If the feature depends on system API trigger, which means it will only be enabled on specific OEM devices, the trigger type should be declared as below:</p><div class="sample-container"><code class="" theme="idea"><pre>&lt;application ...<br>  &lt;meta-data<br>  android:name="com.microsoft.crossdevice.trigger.SystemApi"<br>  android:value="the sum value of all features' binary codes" /&gt;<br>  &lt;/application&gt;</pre></code></div></li></ul><p class="paragraph">Now all the features' binary codes are listed below:</p><div class="sample-container"><code class="" theme="idea"><pre>BROWSER_HISTORY: 2<br>RESUME_ACTIVITY: 4</pre></code></div><h2 class=""> Using with an app context service provider (Option for OEMs)</h2><p class="paragraph">Apps that want their context to be provided by a context service provider DO NOT REQUIRE any code libraries to be added. The capability has to be registered through the application manifest however for Link to Windows to detect and request context. Below are all the features support app context service provider:</p><p class="paragraph">Browser Continuity:</p><div class="sample-container"><code class="" theme="idea"><pre>&lt;application ...<br>&lt;meta-data<br>android:name="com.microsoft.crossdevice.browserContextService"<br>android:value="&lt;package of context service provider that LTW should query&gt;" /&gt;<br>&lt;/application&gt;</pre></code></div><p class="paragraph">Note: If an app supports more than one type of context, each meta-data section is needed.</p><h2 class=""> SDK key concepts</h2><p class="paragraph">The SDK provides a core class for sending app context. In order to properly send app context to the host app(Link to Windows), a concrete class that implements the <a href="-i-app-context-event-handler/index.html">com.microsoft.crossdevicesdk.continuity.IAppContextEventHandler</a> class has to be provided with an implementation for the following method:</p><ul><li><p class="paragraph"><a href="-i-app-context-event-handler/on-context-request-received.html">com.microsoft.crossdevicesdk.continuity.IAppContextEventHandler.onContextRequestReceived</a></p></li><li><p class="paragraph"><a href="-i-app-context-event-handler/on-invalid-context-request-received.html">com.microsoft.crossdevicesdk.continuity.IAppContextEventHandler.onInvalidContextRequestReceived</a></p></li><li><p class="paragraph"><a href="-i-app-context-event-handler/on-sync-service-disconnected.html">com.microsoft.crossdevicesdk.continuity.IAppContextEventHandler.onSyncServiceDisconnected</a></p></li></ul><p class="paragraph">When initializing, the app should call <a href="-app-context-manager/initialize.html">com.microsoft.crossdevicesdk.continuity.AppContextManager.initialize</a> to register this callback. When a new broadcast arrives, if it's a message notifying LTW and PL is disconnected, <a href="-i-app-context-event-handler/on-sync-service-disconnected.html">com.microsoft.crossdevicesdk.continuity.IAppContextEventHandler.onSyncServiceDisconnected</a> gets called. Otherwise, the SDK will validate the request content through the intent's extras bundle. More specifically it will verify the following:</p><ul><li><p class="paragraph">Contains a content provider URI</p></li><li><p class="paragraph">The authority for the content provider is valid (package name and signature digest check)</p></li><li><p class="paragraph">Requested content types are valid</p></li></ul><p class="paragraph">If the validations fail, <a href="-i-app-context-event-handler/on-invalid-context-request-received.html">com.microsoft.crossdevicesdk.continuity.IAppContextEventHandler.onInvalidContextRequestReceived</a> gets called. When all the validations pass, <a href="-i-app-context-event-handler/on-context-request-received.html">com.microsoft.crossdevicesdk.continuity.IAppContextEventHandler.onContextRequestReceived</a> gets called. Then an app context can be sent successfully by calling <a href="-app-context-manager/send-app-context.html">com.microsoft.crossdevicesdk.continuity.AppContextManager.sendAppContext</a>. If the sent app context needs to be deleted, <a href="-app-context-manager/delete-app-context.html">com.microsoft.crossdevicesdk.continuity.AppContextManager.deleteAppContext</a> should be called. To receive the result of sending/deleting app context, a concrete class that implements the <a href="-i-app-context-response/index.html">com.microsoft.crossdevicesdk.continuity.IAppContextResponse</a> class has to be provided with an implementation for the following method:</p><ul><li><p class="paragraph"><a href="-i-app-context-response/on-context-response-success.html">com.microsoft.crossdevicesdk.continuity.IAppContextResponse.onContextResponseSuccess</a></p></li><li><p class="paragraph"><a href="-i-app-context-response/on-context-response-error.html">com.microsoft.crossdevicesdk.continuity.IAppContextResponse.onContextResponseError</a></p></li></ul><p class="paragraph">When deInitializing, the app should call <a href="-app-context-manager/de-initialize.html">com.microsoft.crossdevicesdk.continuity.AppContextManager.deInitialize</a> to unregister the callback. After this, any app context should not be sent to the host app.</p><p class="paragraph">package com.microsoft.crossdevicesdk.continuity</p></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">Types</h2>
+              <div class="table" data-togglable="Types"><a data-name="314332225%2FClasslikes%2F316627875" anchor-label="AppContext" id="314332225%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-app-context/index.html">AppContext</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="314332225%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">class <a href="-app-context/index.html">AppContext</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="314332225%2FClasslikes%2F316627875" anchor-label="AppContext" id="314332225%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="314332225%2FClasslikes%2F316627875" anchor-label="AppContext" id="314332225%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>Helper class to provide an app context to the host app(Link to Windows).</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1048389007%2FClasslikes%2F316627875" anchor-label="AppContextBroadcastReceiver" id="-1048389007%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-app-context-broadcast-receiver/index.html">AppContextBroadcastReceiver</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1048389007%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">class <a href="-app-context-broadcast-receiver/index.html">AppContextBroadcastReceiver</a> : <a href="https://developer.android.com/reference/kotlin/android/content/BroadcastReceiver.html">BroadcastReceiver</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1048389007%2FClasslikes%2F316627875" anchor-label="AppContextBroadcastReceiver" id="-1048389007%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="-1048389007%2FClasslikes%2F316627875" anchor-label="AppContextBroadcastReceiver" id="-1048389007%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>Helper class used to implement a broadcast receiver for app context broadcasts.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="77358900%2FClasslikes%2F316627875" anchor-label="AppContextManager" id="77358900%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-app-context-manager/index.html">AppContextManager</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="77358900%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">object <a href="-app-context-manager/index.html">AppContextManager</a> : <a href="../../continuity/com.microsoft.crossdevicesdk.continuity/-i-app-context-manager/index.html">IAppContextManager</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="77358900%2FClasslikes%2F316627875" anchor-label="AppContextManager" id="77358900%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="77358900%2FClasslikes%2F316627875" anchor-label="AppContextManager" id="77358900%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>The core API implementation that provides the basic functionality.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="645899888%2FClasslikes%2F316627875" anchor-label="BrowserHistoryContext" id="645899888%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-browser-history-context/index.html">BrowserHistoryContext</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="645899888%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">class <a href="-browser-history-context/index.html">BrowserHistoryContext</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="645899888%2FClasslikes%2F316627875" anchor-label="BrowserHistoryContext" id="645899888%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="645899888%2FClasslikes%2F316627875" anchor-label="BrowserHistoryContext" id="645899888%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>Helper class to provide browser history context to the host app(Link to Windows).</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="39474145%2FClasslikes%2F316627875" anchor-label="ContextRequestInfo" id="39474145%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-context-request-info/index.html">ContextRequestInfo</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="39474145%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">class <a href="-context-request-info/index.html">ContextRequestInfo</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="39474145%2FClasslikes%2F316627875" anchor-label="ContextRequestInfo" id="39474145%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="39474145%2FClasslikes%2F316627875" anchor-label="ContextRequestInfo" id="39474145%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>Helper class to provide received context information to the partner app.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="756164524%2FClasslikes%2F316627875" anchor-label="IAppContextEventHandler" id="756164524%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-i-app-context-event-handler/index.html">IAppContextEventHandler</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="756164524%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">interface <a href="-i-app-context-event-handler/index.html">IAppContextEventHandler</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="756164524%2FClasslikes%2F316627875" anchor-label="IAppContextEventHandler" id="756164524%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="756164524%2FClasslikes%2F316627875" anchor-label="IAppContextEventHandler" id="756164524%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>This is the IPC callback interface for the partner app to implement.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2068491611%2FClasslikes%2F316627875" anchor-label="IAppContextResponse" id="2068491611%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-i-app-context-response/index.html">IAppContextResponse</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2068491611%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">interface <a href="-i-app-context-response/index.html">IAppContextResponse</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1295387358%2FClasslikes%2F316627875" anchor-label="LogUtils" id="-1295387358%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-log-utils/index.html">LogUtils</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1295387358%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">object <a href="-log-utils/index.html">LogUtils</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1295387358%2FClasslikes%2F316627875" anchor-label="LogUtils" id="-1295387358%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="-1295387358%2FClasslikes%2F316627875" anchor-label="LogUtils" id="-1295387358%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>An util class that used for logcat in debug mode.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1115675676%2FClasslikes%2F316627875" anchor-label="ProtocolConstants" id="1115675676%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>
+                <div class="table-row" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-protocol-constants/index.html">ProtocolConstants</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1115675676%2FClasslikes%2F316627875"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":continuity:dokkaHtmlPartial/release" data-filterable-set=":continuity:dokkaHtmlPartial/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":continuity:dokkaHtmlPartial/release"><div class="symbol monospace">object <a href="-protocol-constants/index.html">ProtocolConstants</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1115675676%2FClasslikes%2F316627875" anchor-label="ProtocolConstants" id="1115675676%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a><div class="brief "><a data-name="1115675676%2FClasslikes%2F316627875" anchor-label="ProtocolConstants" id="1115675676%2FClasslikes%2F316627875" data-filterable-set=":continuity:dokkaHtmlPartial/release"></a>Provides constants of type value to the app.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  
+</body></html>
+
+
