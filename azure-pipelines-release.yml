@@ -57,8 +57,8 @@ extends:
               - task: Gradle@2
                 displayName: 'Build Cross Device SDK aar'
                 inputs:
-                  gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
-                  workingDirectory: android/components/WindowsCrossDevice
+                  gradleWrapperFile: gradlew
+                  workingDirectory: $(Build.Repository.LocalPath)
                   options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assemble'
@@ -67,8 +67,8 @@ extends:
               - task: Gradle@2
                 displayName: 'Build kotlin doc'
                 inputs:
-                  gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
-                  workingDirectory: android/components/WindowsCrossDevice
+                  gradleWrapperFile: gradlew
+                  workingDirectory: $(Build.Repository.LocalPath)
                   options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'generateKotlinDocs'
@@ -77,14 +77,14 @@ extends:
               - task: CopyFiles@2
                 displayName: 'Copy AAR Files to: $(build.artifactstagingdirectory)'
                 inputs:
-                  SourceFolder: 'android\components\WindowsCrossDevice'
+                  SourceFolder: '$(Build.Repository.LocalPath)'
                   Contents: '**/build/outputs/aar/**/*.aar'
                   TargetFolder: '$(build.artifactstagingdirectory)'
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: CopyFiles@2
                 displayName: 'Copy kotlin doc zip to: $(build.artifactstagingdirectory)'
                 inputs:
-                  SourceFolder: 'android\components\WindowsCrossDevice\build\dokka\zip'
+                  SourceFolder: '$(Build.Repository.LocalPath)/build/dokka/zip'
                   Contents: '**/*.zip'
                   TargetFolder: '$(build.artifactstagingdirectory)'
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
