@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:AppContextRequestHelper.kt$AppContextRequestHelper.Companion$0xFF</ID>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$0.5f</ID>
+    <ID>MaxLineLength:AppContext.kt$AppContext$*</ID>
+    <ID>MaxLineLength:AppContextManager.kt$AppContextManager$?.</ID>
+    <ID>MaxLineLength:BrowserHistoryContext.kt$BrowserHistoryContext$*</ID>
+    <ID>MaxLineLength:IAppContextManager.kt$IAppContextManager$*</ID>
+    <ID>MaxLineLength:MainActivity.kt$MainActivity$"Current app context: ${it.contextId}\n App ID: ${it.appId}\n Created: ${it.createTime}\n Updated: ${it.lastUpdatedTime}\n Type: ${it.type}"</ID>
+    <ID>NestedBlockDepth:AppContextRequestHelper.kt$AppContextRequestHelper.Companion$private fun initializeApprovedRequesters(context: Context)</ID>
+    <ID>ReturnCount:AppContextBroadcastReceiver.kt$AppContextBroadcastReceiver$override fun onReceive( context: Context, intent: Intent, )</ID>
+    <ID>ReturnCount:AppContextRequestHelper.kt$AppContextRequestHelper.Companion$fun registerReceiver( context: Context, broadcastReceiver: BroadcastReceiver, filter: IntentFilter, flags: Int ): Intent?</ID>
+    <ID>ReturnCount:AppContextRequestHelper.kt$AppContextRequestHelper.Companion$fun validateContentProviderAuthority( context: Context, uri: Uri, ): AppContextRequestStatus</ID>
+    <ID>ReturnCount:AppContextRequestHelper.kt$AppContextRequestHelper.Companion$private fun verifySignatureDigest( packageManager: PackageManager, packageName: String ): AppContextRequestStatus</ID>
+    <ID>TooManyFunctions:AppContextManager.kt$AppContextManager : IAppContextManager</ID>
+    <ID>TooManyFunctions:AppContextRequestHelper.kt$AppContextRequestHelper$Companion</ID>
+    <ID>TooManyFunctions:BrowserHistoryContext.kt$BrowserHistoryContext</ID>
+    <ID>UseRequire:AppContext.kt$AppContext$throw IllegalArgumentException( "WebLink exceeds the maximum length of 2083 characters" )</ID>
+    <ID>UseRequire:AppContext.kt$AppContext$throw IllegalArgumentException( "intentUri exceeds the maximum length of 2083 characters" )</ID>
+  </CurrentIssues>
+</SmellBaseline>
