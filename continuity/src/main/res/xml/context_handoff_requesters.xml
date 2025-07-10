@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<requesters>
+    <package name="com.microsoft.appmanager">
+        <cert-digest>e843ee3da1195d6afb89caa3ce7427b08fc01fd878a24fa56e962c35c71d5e70</cert-digest>
+    </package>
+</requesters>

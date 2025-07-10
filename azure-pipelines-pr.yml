@@ -1,0 +1,126 @@
+# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=176466
+trigger:
+  batch: true
+  branches:
+    include:
+      - development
+      - servicing/*
+      - main
+      - release/*
+  paths:
+    include:
+      - android/components/WindowsCrossDevice/*
+variables:
+  - name: versionMajor
+    value: 2
+  - template: ../../../Build/BuildNumber.yml
+  - name: versionBuild
+    value: $[counter(format('{0}.{1}.{2}', variables['versionMajor'], variables['versionMinor'], eq(variables['build.reason'], 'PullRequest')), 1)]
+  - name: versionRevision
+    value: 0
+  - name: jdkVersion
+    value: '1.17'
+name: '$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision).$(build.reason)'
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    pool:
+      name: MobileExperience_Tiny_Workloads_WestUS2
+    sdl:
+      git:
+        submodules: false
+    customBuildTags:
+      - ES365AIMigrationTooling
+    stages:
+      - stage: Build
+        jobs:
+          - job: Compile
+            displayName: Compile
+            workspace:
+              clean: all
+            timeoutInMinutes: 180
+            cancelTimeoutInMinutes: 5
+            steps:
+              - checkout: self
+                clean: true
+                submodules: false
+                fetchDepth: 1
+                fetchTags: false
+              - task: AzureCLI@2
+                displayName: 'Generate managed identity access token for maven feeds'
+                inputs:
+                  azureSubscription: 'MXP-ES-Service'
+                  scriptType: 'pscore'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                    $accessToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
+                    Write-Host "##vso[task.setvariable variable=ado_reader]MXP-ES-Service"
+                    Write-Host "##vso[task.setvariable variable=ado_reader_mmxsdk_pass;issecret=true]$accessToken"
+                    Write-Host "##vso[task.setvariable variable=ado_reader_ms_pass;issecret=true]$accessToken"
+              - task: Gradle@2
+                displayName: 'Build Cross Device SDK release aar'
+                inputs:
+                  gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
+                  workingDirectory: android/components/WindowsCrossDevice
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  jdkVersionOption: $(jdkVersion)
+                  tasks: 'assembleRelease'
+                  publishJUnitResults: false
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: Gradle@2
+                displayName: 'Build Cross Device SDK debug aar'
+                inputs:
+                  gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
+                  workingDirectory: android/components/WindowsCrossDevice
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  jdkVersionOption: $(jdkVersion)
+                  tasks: 'assembleDebug'
+                  publishJUnitResults: false
+                condition: succeeded()
+      - stage: StaticAnalysis
+        dependsOn: [ ]
+        jobs:
+          - job: StaticAnalysis
+            displayName: StaticAnalysis
+            steps:
+            - checkout: self
+              clean: true
+              submodules: false
+              fetchDepth: 1
+              fetchTags: false
+            - task: AzureCLI@2
+              displayName: 'Generate managed identity access token for maven feeds'
+              inputs:
+                azureSubscription: 'MXP-ES-Service'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  $accessToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
+                  Write-Host "##vso[task.setvariable variable=ado_reader]MXP-ES-Service"
+                  Write-Host "##vso[task.setvariable variable=ado_reader_mmxsdk_pass;issecret=true]$accessToken"
+                  Write-Host "##vso[task.setvariable variable=ado_reader_ms_pass;issecret=true]$accessToken"
+            - task: Gradle@2
+              displayName: 'Kotlin ktlint'
+              inputs:
+                gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
+                workingDirectory: android/components/WindowsCrossDevice
+                tasks: 'ktlintCheck'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                jdkVersionOption: $(jdkVersion)
+              condition: succeededOrFailed()
+
+            - task: Gradle@2
+              displayName: 'Kotlin detekt'
+              inputs:
+                gradleWrapperFile: android/components/WindowsCrossDevice/gradlew
+                workingDirectory: android/components/WindowsCrossDevice
+                tasks: 'detekt'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                jdkVersionOption: $(jdkVersion)
+              condition: succeededOrFailed()
