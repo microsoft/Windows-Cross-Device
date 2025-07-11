@@ -88,6 +88,17 @@ extends:
                   Contents: '**/*.zip'
                   TargetFolder: '$(build.artifactstagingdirectory)'
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: GitHubRelease@1
+                inputs:
+                  gitHubConnection: 'Github-Windows-Cross-Device'
+                  repositoryName: 'microsoft/Windows-Cross-Device'
+                  action: 'create'
+                  target: '$(Build.SourceVersion)'
+                  tagSource: 'userSpecifiedTag'
+                  tag: '$(buildNumber)'
+                  assets: '$(Build.ArtifactStagingDirectory)/*.aar'
+                  changeLogCompareToRelease: 'lastFullRelease'
+                  changeLogType: 'commitBased'
             templateContext:
               outputs:
                 - output: pipelineArtifact
