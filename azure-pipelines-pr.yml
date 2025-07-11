@@ -8,6 +8,16 @@ trigger:
   paths:
     include:
       - /*
+
+pr:
+  branches:
+    include:
+      - main
+      - release/*
+  paths:
+    include:
+      - /*
+
 variables:
   - name: versionMajor
     value: 3
