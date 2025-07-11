@@ -102,6 +102,7 @@ extends:
                   artifactName: SDK
 
       - stage: Release
+        dependsOn: [Build]
         jobs:
           - job: ReleaseJob
             displayName: Release
@@ -126,4 +127,3 @@ extends:
                   assets: '$(Build.ArtifactStagingDirectory)/*.aar'
                   changeLogCompareToRelease: 'lastFullRelease'
                   changeLogType: 'commitBased'
-
