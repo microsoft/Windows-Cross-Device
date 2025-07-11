@@ -124,6 +124,6 @@ extends:
                   target: '$(Build.SourceVersion)'
                   tagSource: 'userSpecifiedTag'
                   tag: '$(buildNumber)'
-                  assets: '$(Build.ArtifactStagingDirectory)/*.aar'
+                  assets: '$(Build.ArtifactStagingDirectory)/SDK/*.aar'
                   changeLogCompareToRelease: 'lastFullRelease'
                   changeLogType: 'commitBased'
