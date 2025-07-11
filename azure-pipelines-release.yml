@@ -102,10 +102,11 @@ extends:
                   artifactName: SDK
 
       - stage: Release
-        dependsOn: [Build]
+        dependsOn: [ Build ]
+
         jobs:
-          - job: ReleaseJob
-            displayName: Release
+          - job:
+              ReleaseJob      displayName: Release
             timeoutInMinutes: 180
             cancelTimeoutInMinutes: 5
             templateContext:
@@ -124,6 +125,6 @@ extends:
                   target: '$(Build.SourceVersion)'
                   tagSource: 'userSpecifiedTag'
                   tag: '$(buildNumber)'
-                  assets: '$(Build.ArtifactStagingDirectory)/SDK/*.aar'
+                  assets: '$(Pipeline.Workspace)/*.aar'
                   changeLogCompareToRelease: 'lastFullRelease'
                   changeLogType: 'commitBased'
