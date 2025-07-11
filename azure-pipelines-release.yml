@@ -105,8 +105,8 @@ extends:
         dependsOn: [ Build ]
 
         jobs:
-          - job:
-              ReleaseJob      displayName: Release
+          - job: ReleaseJob
+            displayName: Release
             timeoutInMinutes: 180
             cancelTimeoutInMinutes: 5
             templateContext:
