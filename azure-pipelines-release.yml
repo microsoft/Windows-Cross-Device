@@ -1,4 +1,4 @@
-# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=125214185
+# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=177977
 trigger: none
 
 variables:
@@ -79,6 +79,7 @@ extends:
                   SourceFolder: '$(Build.Repository.LocalPath)'
                   Contents: '**/build/outputs/aar/**/*.aar'
                   TargetFolder: '$(build.artifactstagingdirectory)'
+                  flattenFolders: true
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: CopyFiles@2
                 displayName: 'Copy kotlin doc zip to: $(build.artifactstagingdirectory)'
@@ -86,17 +87,6 @@ extends:
                   SourceFolder: '$(Build.Repository.LocalPath)/build/dokka/zip'
                   Contents: '**/*.zip'
                   TargetFolder: '$(build.artifactstagingdirectory)'
-                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-              - task: GitHubRelease@0
-                displayName: 'Create GitHub Release'
-                inputs:
-                  gitHubConnection: '<GitHub service connection>'
-                  repositoryName: '<GitHub repository>'
-                  tag: '$(Build.BuildId)'
-                  title: 'Release $(Build.BuildId)'
-                  assets: '$(Build.ArtifactStagingDirectory)/**'
-                  isDraft: false
-                  isPrerelease: false
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
             templateContext:
               outputs:
