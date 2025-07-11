@@ -10,13 +10,18 @@ variables:
     value: $[counter(format('{0}.{1}.{2}', variables['versionMajor'], variables['versionMinor'], eq(variables['build.reason'], 'PullRequest')), 1)]
   - name: jdkVersion
     value: '1.17'
+  - name: buildNumber
+    value: '$(versionMajor).$(versionMinor).$(versionBuild)'
+
 name: '$(versionMajor).$(versionMinor).$(versionBuild).$(build.reason)'
+
 resources:
   repositories:
     - repository: 1esPipelines
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
       ref: refs/tags/release
+
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
@@ -58,7 +63,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assemble'
                   publishJUnitResults: false
@@ -68,7 +73,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'generateKotlinDocs'
                   publishJUnitResults: false
@@ -88,7 +93,16 @@ extends:
                   Contents: '**/*.zip'
                   TargetFolder: '$(build.artifactstagingdirectory)'
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+      - stage: Release
+        jobs:
+          - job: ReleaseJob
+            displayName: Release
+            pool:
+              vmImage: 'ubuntu-latest'
+            steps:
               - task: GitHubRelease@1
+                displayName: 'Create GitHub Release'
                 inputs:
                   gitHubConnection: 'Github-Windows-Cross-Device'
                   repositoryName: 'microsoft/Windows-Cross-Device'
