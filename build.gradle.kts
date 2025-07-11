@@ -164,3 +164,30 @@ tasks.register("separateDocZipped") {
         }
     }
 }
+
+tasks.register("publishAllToMaven") {
+    subprojects {
+        val subproject = this
+        if (subproject.plugins.hasPlugin("com.android.library")) {
+            dependsOn("${subproject.name}:publish")
+        }
+    }
+}
+
+subprojects {
+    afterEvaluate {
+        if (plugins.hasPlugin("com.android.library")) {
+            extensions.configure<com.android.build.gradle.LibraryExtension> {
+                publishing {
+                    multipleVariants("releaseAndDebug") {
+                        includeBuildTypeValues("debug", "release")
+                    }
+                }
+
+                buildFeatures {
+                    buildConfig = true
+                }
+            }
+        }
+    }
+}

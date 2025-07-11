@@ -78,6 +78,16 @@ extends:
                   tasks: 'generateKotlinDocs'
                   publishJUnitResults: false
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: Gradle@2
+                displayName: 'Publish to Maven'
+                inputs:
+                  gradleWrapperFile: gradlew
+                  workingDirectory: $(Build.Repository.LocalPath)
+                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass)  -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  jdkVersionOption: $(jdkVersion)
+                  tasks: 'publishAllToMaven'
+                  publishJUnitResults: false
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: CopyFiles@2
                 displayName: 'Copy AAR Files to: $(build.artifactstagingdirectory)'
                 inputs:
