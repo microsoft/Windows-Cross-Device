@@ -93,6 +93,13 @@ extends:
                   Contents: '**/*.zip'
                   TargetFolder: '$(build.artifactstagingdirectory)'
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  displayName: 'Publish Artifact: SDK (AzureArtifacts)'
+                  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+                  targetPath: '$(Build.ArtifactStagingDirectory)'
+                  artifactName: SDK
 
       - stage: Release
         jobs:
@@ -100,6 +107,12 @@ extends:
             displayName: Release
             timeoutInMinutes: 180
             cancelTimeoutInMinutes: 5
+            templateContext:
+              type: releaseJob
+              isProduction: true
+              inputs:
+                - input: pipelineArtifact
+                  artifactName: SDK
             steps:
               - task: GitHubRelease@1
                 displayName: 'Create GitHub Release'
@@ -113,10 +126,4 @@ extends:
                   assets: '$(Build.ArtifactStagingDirectory)/*.aar'
                   changeLogCompareToRelease: 'lastFullRelease'
                   changeLogType: 'commitBased'
-            templateContext:
-              outputs:
-                - output: pipelineArtifact
-                  displayName: 'Publish Artifact: SDK (AzureArtifacts)'
-                  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-                  targetPath: '$(Build.ArtifactStagingDirectory)'
-                  artifactName: SDK
+
