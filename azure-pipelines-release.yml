@@ -98,8 +98,8 @@ extends:
         jobs:
           - job: ReleaseJob
             displayName: Release
-            pool:
-              vmImage: 'ubuntu-latest'
+            timeoutInMinutes: 180
+            cancelTimeoutInMinutes: 5
             steps:
               - task: GitHubRelease@1
                 displayName: 'Create GitHub Release'
