@@ -3,7 +3,7 @@ trigger: none
 
 variables:
   - name: versionMajor
-    value: 3
+    value: 2
   - name: versionMinor
     value: 0
   - name: versionBuild
@@ -86,6 +86,17 @@ extends:
                   SourceFolder: '$(Build.Repository.LocalPath)/build/dokka/zip'
                   Contents: '**/*.zip'
                   TargetFolder: '$(build.artifactstagingdirectory)'
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: GitHubRelease@0
+                displayName: 'Create GitHub Release'
+                inputs:
+                  gitHubConnection: '<GitHub service connection>'
+                  repositoryName: '<GitHub repository>'
+                  tag: '$(Build.BuildId)'
+                  title: 'Release $(Build.BuildId)'
+                  assets: '$(Build.ArtifactStagingDirectory)/**'
+                  isDraft: false
+                  isPrerelease: false
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
             templateContext:
               outputs:
