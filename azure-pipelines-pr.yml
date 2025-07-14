@@ -1,4 +1,4 @@
-# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=176466
+# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=177937
 trigger:
   batch: true
   branches:
@@ -8,17 +8,26 @@ trigger:
   paths:
     include:
       - /*
+
+pr:
+  branches:
+    include:
+      - main
+      - release/*
+  paths:
+    include:
+      - /*
+
 variables:
   - name: versionMajor
-    value: 2
-  - template: ../../../Build/BuildNumber.yml
+    value: 3
+  - name: versionMinor
+    value: 0
   - name: versionBuild
     value: $[counter(format('{0}.{1}.{2}', variables['versionMajor'], variables['versionMinor'], eq(variables['build.reason'], 'PullRequest')), 1)]
-  - name: versionRevision
-    value: 0
   - name: jdkVersion
     value: '1.17'
-name: '$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision).$(build.reason)'
+name: '$(versionMajor).$(versionMinor).$(versionBuild).$(build.reason)'
 resources:
   repositories:
     - repository: 1esPipelines
@@ -66,7 +75,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleRelease'
                   publishJUnitResults: false
@@ -76,7 +85,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleDebug'
                   publishJUnitResults: false
@@ -109,7 +118,7 @@ extends:
                 gradleWrapperFile: gradlew
                 workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'ktlintCheck'
-                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                 jdkVersionOption: $(jdkVersion)
               condition: succeededOrFailed()
 
@@ -119,6 +128,6 @@ extends:
                 gradleWrapperFile: gradlew
                 workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'detekt'
-                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                 jdkVersionOption: $(jdkVersion)
               condition: succeededOrFailed()

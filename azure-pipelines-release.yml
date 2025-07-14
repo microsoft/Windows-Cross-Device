@@ -1,23 +1,27 @@
-# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=125214185
+# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=177977
 trigger: none
 
 variables:
   - name: versionMajor
-    value: 2
-  - template: ../../../Build/BuildNumber.yml
+    value: 3
+  - name: versionMinor
+    value: 0
   - name: versionBuild
     value: $[counter(format('{0}.{1}.{2}', variables['versionMajor'], variables['versionMinor'], eq(variables['build.reason'], 'PullRequest')), 1)]
-  - name: versionRevision
-    value: 0
   - name: jdkVersion
     value: '1.17'
-name: '$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision).$(build.reason)'
+  - name: buildNumber
+    value: '$(versionMajor).$(versionMinor).$(versionBuild)'
+
+name: '$(versionMajor).$(versionMinor).$(versionBuild).$(build.reason)'
+
 resources:
   repositories:
     - repository: 1esPipelines
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
       ref: refs/tags/release
+
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
@@ -59,7 +63,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assemble'
                   publishJUnitResults: false
@@ -69,9 +73,19 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild).$(versionRevision) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'generateKotlinDocs'
+                  publishJUnitResults: false
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: Gradle@2
+                displayName: 'Publish to Maven'
+                inputs:
+                  gradleWrapperFile: gradlew
+                  workingDirectory: $(Build.Repository.LocalPath)
+                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass)  -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  jdkVersionOption: $(jdkVersion)
+                  tasks: 'publishAllToMaven'
                   publishJUnitResults: false
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: CopyFiles@2
@@ -80,6 +94,7 @@ extends:
                   SourceFolder: '$(Build.Repository.LocalPath)'
                   Contents: '**/build/outputs/aar/**/*.aar'
                   TargetFolder: '$(build.artifactstagingdirectory)'
+                  flattenFolders: true
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: CopyFiles@2
                 displayName: 'Copy kotlin doc zip to: $(build.artifactstagingdirectory)'
@@ -95,3 +110,31 @@ extends:
                   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
                   targetPath: '$(Build.ArtifactStagingDirectory)'
                   artifactName: SDK
+
+      - stage: Release
+        dependsOn: [ Build ]
+
+        jobs:
+          - job: ReleaseJob
+            displayName: Release
+            timeoutInMinutes: 180
+            cancelTimeoutInMinutes: 5
+            templateContext:
+              type: releaseJob
+              isProduction: true
+              inputs:
+                - input: pipelineArtifact
+                  artifactName: SDK
+            steps:
+              - task: GitHubRelease@1
+                displayName: 'Create GitHub Release'
+                inputs:
+                  gitHubConnection: 'Github-Windows-Cross-Device'
+                  repositoryName: 'microsoft/Windows-Cross-Device'
+                  action: 'create'
+                  target: '$(Build.SourceVersion)'
+                  tagSource: 'userSpecifiedTag'
+                  tag: '$(buildNumber)'
+                  assets: '$(Pipeline.Workspace)/*.aar'
+                  changeLogCompareToRelease: 'lastFullRelease'
+                  changeLogType: 'commitBased'

@@ -1,0 +1,25 @@
+apply plugin: "maven-publish"
+
+publishing {
+    publications {
+        releaseAndDebug(MavenPublication) {
+            groupId "${rootProject.ext.mavenGroupId}"
+            artifactId "${rootProject.ext.build_sdkName}-${project.name}"
+            version "${rootProject.ext.componentizedSDKVersion}"
+            afterEvaluate {
+                from(components.releaseAndDebug)
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name "mmxsdk-visualstudio.com-mmx_sdk"
+            url "https://mmxsdk.pkgs.visualstudio.com/_packaging/MMX_SDK/maven/v1"
+            credentials {
+                username ado_reader
+                password ado_reader_mmxsdk_pass
+            }
+        }
+    }
+}
