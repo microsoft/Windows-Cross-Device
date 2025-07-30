@@ -95,7 +95,7 @@ val artifactName = "crossdevicesdk"
 val mavenGroupId = "com.microsoft.mmx"
 
 // Define the library modules to include in the documentation
-val libraryModules = listOf("continuity")
+val libraryModules = listOf("continuity","crossdeviceextender")
 
 tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
@@ -120,10 +120,12 @@ rootProject.extra.apply {
 detekt {
     buildUponDefaultConfig = true
     allRules = true
-    // Set source sets to only include continuity and partnerapptriggertestapp modules
+    // Set source sets to only include continuity, crossdeviceextender and partnerapptriggertestapp modules
     source = files(
         "$projectDir/continuity/src/main/java",
         "$projectDir/continuity/src/test/java",
+        "$projectDir/crossdeviceextender/src/main/java",
+        "$projectDir/crossdeviceextender/src/test/java",
         "$projectDir/partnerapptriggertestapp/src/main/java",
         "$projectDir/partnerapptriggertestapp/src/test/java"
     )

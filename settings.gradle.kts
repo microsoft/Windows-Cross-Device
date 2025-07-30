@@ -21,5 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Windows-Cross-Device"
 include(":continuity")
+include(":crossdeviceextender")
 include(":partnerapptriggertestapp")
  
