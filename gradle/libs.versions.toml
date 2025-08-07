@@ -35,6 +35,7 @@ junitJupiter = "5.8.1"
 [libraries]
 # Plugins and build tools
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+androidx-junit-ktx = { module = "androidx.test.ext:junit-ktx" , version.ref = "junitExt" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ktlint-gradle = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 fataar-plugin = { group = "com.github.kezong", name = "fat-aar", version.ref = "fataar" }
