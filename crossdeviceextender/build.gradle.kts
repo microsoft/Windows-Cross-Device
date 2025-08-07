@@ -9,15 +9,19 @@ plugins {
 
 apply(from = "${rootDir}/gradle/maven-publish.gradle")
 
+
 dependencies {
-    implementation "androidx.core:core-ktx:${ktxCoreVersion}"
-    testImplementation "androidx.test.ext:junit-ktx:${androidxJunitKtxVersion}"
-    testImplementation "junit:junit:${junitVersion}"
-    testImplementation "org.mockito:mockito-core:${mockitoCoreVersion}"
-    testImplementation "org.robolectric:robolectric:${robolectricVersion}"
-    androidTestImplementation "androidx.test.ext:junit:${androidxTestJunitVersion}"
-    androidTestImplementation "androidx.test.espresso:espresso-core:${androidxTestEspressoCore}"
+    implementation(libs.core.ktx)
+
+    testImplementation(libs.androidx.junit.ktx)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.robolectric)
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.espresso.core)
 }
+
 
 android {
     namespace = "com.microsoft.crossdevicesdk.crossdeviceextender"
@@ -26,16 +30,14 @@ android {
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-
+        buildConfigField("String", "VERSION_NAME", "\"${rootProject.extra["versionName"]}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro')
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -58,27 +60,15 @@ android {
         jvmTarget = libs.versions.jvmTarget.get()
     }
 }
-
-dokkaHtmlPartial {
+tasks.dokkaHtmlPartial {
     outputDirectory.set(file("build/docs/partial"))
-    dokkaSourceSets {
-        configureEach {
-            moduleName = "Cross Device Extender SDK Documentation"
-            includes.from("src/main/java/com/microsoft/crossdevicesdk/crossdeviceextender/package-info.md")
-        }
+    dokkaSourceSets.configureEach {
+        moduleName.set("Cross Device Extender SDK Documentation")
+        includes.from("src/main/java/com/microsoft/crossdevicesdk/crossdeviceextender/package-info.md")
     }
 }
 
-dokkaHtml {
-    dokkaSourceSets {
-        configureEach {
-            moduleName = "Cross Device Extender SDK Documentation"
-            includes.from("src/main/java/com/microsoft/crossdevicesdk/crossdeviceextender/package-info.md")
-        }
-    }
-}
-
-ktlint {
-    android = true
-    outputColorName = "RED"
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    android.set(true)
+    outputColorName.set("RED")
 }
