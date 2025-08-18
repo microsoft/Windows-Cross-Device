@@ -50,12 +50,12 @@ extends:
               - task: AzureCLI@2
                 displayName: 'Generate managed identity access token for maven feeds'
                 inputs:
-                  azureSubscription: 'MXP-ES-Service'
+                  azureSubscription: 'MXP-ES-Service-WestUS2'
                   scriptType: 'pscore'
                   scriptLocation: 'inlineScript'
                   inlineScript: |
                     $accessToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
-                    Write-Host "##vso[task.setvariable variable=ado_reader]MXP-ES-Service"
+                    Write-Host "##vso[task.setvariable variable=ado_reader]MXP-ES-Service-WestUS2"
                     Write-Host "##vso[task.setvariable variable=ado_reader_ms_pass;issecret=true]$accessToken"
                     Write-Host "##vso[task.setvariable variable=ado_reader_mmxsdk_pass;issecret=true]$accessToken"
               - task: Gradle@2
