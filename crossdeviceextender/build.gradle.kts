@@ -7,8 +7,7 @@ plugins {
     id("kotlin-parcelize")
 }
 
-apply(from = "${rootDir}/gradle/maven-publish.gradle")
-
+apply(from = rootDir.resolve("gradle/maven-publish.gradle"))
 
 dependencies {
     implementation(libs.core.ktx)
@@ -21,7 +20,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)
 }
-
 
 android {
     namespace = "com.microsoft.crossdevicesdk.crossdeviceextender"
@@ -37,7 +35,12 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile(
+                    "proguard-android-optimize.txt"
+                ),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -64,7 +67,9 @@ tasks.dokkaHtmlPartial {
     outputDirectory.set(file("build/docs/partial"))
     dokkaSourceSets.configureEach {
         moduleName.set("Cross Device Extender SDK Documentation")
-        includes.from("src/main/java/com/microsoft/crossdevicesdk/crossdeviceextender/package-info.md")
+        includes.from(
+            "src/main/java/com/microsoft/crossdevicesdk/crossdeviceextender/package-info.md"
+        )
     }
 }
 
