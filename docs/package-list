@@ -3,3 +3,5 @@ $dokka.linkExtension:html
 
 module:Cross Device Continuity SDK Documentation
 com.microsoft.crossdevicesdk.continuity
+module:Cross Device Extender SDK Documentation
+com.microsoft.crossdevicesdk.crossdeviceextender

@@ -8,7 +8,7 @@ Enables Android apps to send app context to the Link to Windows (LTW) app, allow
 
 The Continuity SDK enables Android applications to provide seamless cross-device resume capabilities between Android devices and Windows PCs. By integrating this SDK, partner apps can programmatically share recent tasks (such as website URLs, document links, or music tracks) from Android devices equipped with the "Link to Windows" package, allowing users to continue these tasks directly on their Windows PC.
 Learn more about seamless cross-device experiences: [Phone Link - Seamless task continuity](https://review.learn.microsoft.com/en-us/windows/cross-device/phonelink/?branch=pr-en-us-5521).
-For complete API documentation and detailed guidance, see the [Continuity SDK Kotlin Docs](https://microsoft.github.io/Windows-Cross-Device).
+For complete API documentation and detailed guidance, see the [Continuity SDK Kotlin Docs](https://microsoft.github.io/Windows-Cross-Device/continuity/index.html).
 
 ---
 

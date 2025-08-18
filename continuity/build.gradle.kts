@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.dokka)
 }
 
-apply(from = "${rootDir}/gradle/maven-publish.gradle")
+apply(from = rootDir.resolve("gradle/maven-publish.gradle"))
 
 android {
     namespace = "com.microsoft.crossdevicesdk.continuity"
