@@ -1,4 +1,3 @@
-# Link To ADO Pipeline: https://dev.azure.com/microsoft/OS/_build?definitionId=177977
 trigger: none
 
 variables:
