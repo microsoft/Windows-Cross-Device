@@ -1,25 +1,84 @@
 apply plugin: "maven-publish"
+apply plugin: "signing"
 
-publishing {
-    publications {
-        releaseAndDebug(MavenPublication) {
-            groupId "${rootProject.ext.mavenGroupId}"
-            artifactId "${rootProject.ext.build_sdkName}-${project.name}"
-            version "${rootProject.ext.componentizedSDKVersion}"
-            afterEvaluate {
+// Task to generate sources JAR
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+// Task to generate javadoc JAR (using dokka for Kotlin)
+tasks.register('javadocJar', Jar) {
+    archiveClassifier.set('javadoc')
+    dependsOn tasks.named('dokkaHtml')
+    from tasks.named('dokkaHtml').flatMap { it.outputDirectory }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            releaseAndDebug(MavenPublication) {
+                groupId "${rootProject.ext.mavenGroupId}"
+                artifactId "${rootProject.ext.build_sdkName}-${project.name}"
+                version "${rootProject.ext.componentizedSDKVersion}"
                 from(components.releaseAndDebug)
+
+                // Add sources and javadoc JARs
+                artifact(sourcesJar)
+                artifact(javadocJar)
+
+                pom {
+                    name = "${rootProject.ext.build_sdkName}-${project.name}"
+                    description = "Microsoft Cross Device SDK - ${project.name}"
+                    url = "https://github.com/microsoft/Windows-Cross-Device"
+
+                    licenses {
+                        license {
+                            name = "MIT License"
+                            url = "http://opensource.org/licenses/MIT"
+                            distribution = "repo"
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = "microsoft"
+                            name = "Microsoft"
+                        }
+                    }
+
+                    scm {
+                        connection = "scm:git:git@github.com:microsoft/Windows-Cross-Device.git"
+                        developerConnection = "scm:git:git@github.com:microsoft/Windows-Cross-Device.git"
+                        url = "https://github.com/microsoft/Windows-Cross-Device.git"
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                name "mmxsdk-visualstudio.com-mmx_sdk"
+                url "https://mmxsdk.pkgs.visualstudio.com/_packaging/MMX_SDK/maven/v1"
+                credentials {
+                    username ado_reader
+                    password ado_reader_mmxsdk_pass
+                }
+            }
+            // Local staging directory for ESRP Maven Central publishing
+            maven {
+                name "mavenCentralStaging"
+                url "${rootProject.buildDir}/maven-staging"
             }
         }
     }
 
-    repositories {
-        maven {
-            name "mmxsdk-visualstudio.com-mmx_sdk"
-            url "https://mmxsdk.pkgs.visualstudio.com/_packaging/MMX_SDK/maven/v1"
-            credentials {
-                username ado_reader
-                password ado_reader_mmxsdk_pass
-            }
-        }
+    // GPG signing configuration for Maven Central
+    signing {
+        // Only sign if GPG keys are available (CI environment)
+        required { project.hasProperty('signing.keyId') }
+
+        // Sign all publications
+        sign publishing.publications.releaseAndDebug
     }
 }
