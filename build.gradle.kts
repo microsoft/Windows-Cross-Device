@@ -4,7 +4,6 @@ buildscript {
     dependencies {
         classpath(libs.android.gradle.plugin)
         classpath(libs.ktlint.gradle)
-        classpath(libs.fataar.plugin)
         classpath(libs.kotlin.gradle.plugin)
     }
 }
@@ -174,6 +173,13 @@ tasks.register("publishAllToMaven") {
             dependsOn("${subproject.name}:publish")
         }
     }
+}
+
+// Task to publish continuity module to local staging directory for ESRP Maven Central publishing
+tasks.register("publishToMavenCentralStaging") {
+    description = "Publishes continuity module to local staging directory for ESRP Maven Central publishing"
+    group = "publishing"
+    dependsOn("continuity:publishReleaseAndDebugPublicationToMavenCentralStagingRepository")
 }
 
 subprojects {
