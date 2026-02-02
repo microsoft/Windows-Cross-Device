@@ -1,5 +1,3 @@
-import java.util.Properties
-
 buildscript {
     dependencies {
         classpath(libs.android.gradle.plugin)
@@ -63,27 +61,6 @@ fun getSdkVersionName(): String {
     }
 }
 
-val properties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    properties.load(localPropertiesFile.inputStream())
-}
-
-val ado_reader: String? = if (project.hasProperty("ado_reader") && project.hasProperty("ado_reader_mmxsdk_pass")) {
-    project.property("ado_reader")?.toString()
-} else {
-    properties.getProperty("ado_reader")
-}
-val ado_reader_mmxsdk_pass: String? = if (project.hasProperty("ado_reader") && project.hasProperty("ado_reader_mmxsdk_pass")) {
-    project.property("ado_reader_mmxsdk_pass")?.toString()
-} else {
-    properties.getProperty("ado_reader_mmxsdk_pass")
-}
-
-if (System.getenv("VSTS") == null && (ado_reader.isNullOrBlank() || ado_reader_mmxsdk_pass.isNullOrBlank())) {
-    throw IllegalStateException("ado_reader and/or ado_reader_mmxsdk_pass properties not found in local.properties file.")
-}
-
 val build_versionCode = getCustomVersionCode()
 val build_gitDescription = getGitDescription()
 val componentizedSDKVersion = getSdkVersionName()
@@ -110,8 +87,6 @@ rootProject.extra.apply {
     set("build_sdkName", build_sdkName)
     set("artifactName", artifactName)
     set("mavenGroupId", mavenGroupId)
-    set("ado_reader", ado_reader)
-    set("ado_reader_mmxsdk_pass", ado_reader_mmxsdk_pass)
     set("libraryModules", libraryModules)
 }
 
@@ -162,15 +137,6 @@ tasks.register("separateDocZipped") {
                 destinationDirectory.set(file("${rootProject.buildDir}/dokka/zip"))
             }
             dependsOn("${subproject.name}:docZipped")
-        }
-    }
-}
-
-tasks.register("publishAllToMaven") {
-    subprojects {
-        val subproject = this
-        if (subproject.plugins.hasPlugin("com.android.library")) {
-            dependsOn("${subproject.name}:publish")
         }
     }
 }

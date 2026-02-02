@@ -46,23 +46,12 @@ extends:
                 submodules: false
                 fetchDepth: 1
                 fetchTags: false
-              - task: AzureCLI@2
-                displayName: 'Generate managed identity access token for maven feeds'
-                inputs:
-                  azureSubscription: 'MXP-ES-Service-WestUS2'
-                  scriptType: 'pscore'
-                  scriptLocation: 'inlineScript'
-                  inlineScript: |
-                    $accessToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
-                    Write-Host "##vso[task.setvariable variable=ado_reader]MXP-ES-Service-WestUS2"
-                    Write-Host "##vso[task.setvariable variable=ado_reader_ms_pass;issecret=true]$accessToken"
-                    Write-Host "##vso[task.setvariable variable=ado_reader_mmxsdk_pass;issecret=true]$accessToken"
               - task: Gradle@2
                 displayName: 'Build Cross Device SDK aar'
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(buildNumber)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assemble'
                   publishJUnitResults: false
@@ -72,19 +61,67 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(buildNumber)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'generateKotlinDocs'
                   publishJUnitResults: false
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              # GPG signing setup for Maven Central
+              - task: AzureKeyVault@2
+                displayName: 'Fetch GPG secrets from Key Vault'
+                inputs:
+                  azureSubscription: 'Cross Device SDK ESRP Service Connection'
+                  KeyVaultName: 'ESRP-Cert-KeyVault'
+                  SecretsFilter: 'gpg-private-key,gpg-signing-password,gpg-signing-keyid'
+                  RunAsPreJob: false
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: Bash@3
+                displayName: 'Setup GPG for signing'
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    # Create GPG directory and config
+                    mkdir -p ~/.gnupg
+                    chmod 700 ~/.gnupg
+
+                    # Configure GPG to not use pinentry (required for non-interactive mode)
+                    echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
+                    echo "use-agent" > ~/.gnupg/gpg.conf
+                    echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+
+                    # Reload GPG agent with new config
+                    gpg-connect-agent reloadagent /bye 2>/dev/null || true
+
+                    # Decode base64 and save as ASCII armor file
+                    echo "$(gpg-private-key)" | base64 -d > ~/.gnupg/private-key.asc
+
+                    # Import the key into GPG keyring
+                    gpg --batch --import ~/.gnupg/private-key.asc
+
+                    # Export to binary format for Gradle signing plugin (with passphrase)
+                    echo "$(gpg-signing-password)" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --export-secret-keys $(gpg-signing-keyid) > ~/.gnupg/secring.gpg
+
+                    # Verify the key was exported
+                    if [ -s ~/.gnupg/secring.gpg ]; then
+                      echo "GPG secret keyring created successfully"
+                    else
+                      echo "ERROR: Failed to create GPG secret keyring"
+                      exit 1
+                    fi
+
+                    # Convert path to Windows format for Gradle (use forward slashes for compatibility)
+                    WINDOWS_PATH=$(cygpath -m ~/.gnupg/secring.gpg)
+                    echo "GPG keyring path: $WINDOWS_PATH"
+                    echo "##vso[task.setvariable variable=GPG_KEYRING_FILE]$WINDOWS_PATH"
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: Gradle@2
-                displayName: 'Publish to Maven'
+                displayName: 'Publish to Maven Central Staging with GPG signing'
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(buildNumber) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass)  -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(buildNumber) -Psigning.keyId=$(gpg-signing-keyid) -Psigning.password=$(gpg-signing-password) -Psigning.secretKeyRingFile=$(GPG_KEYRING_FILE)'
                   jdkVersionOption: $(jdkVersion)
-                  tasks: 'publishAllToMaven'
+                  tasks: 'publishToMavenCentralStaging'
                   publishJUnitResults: false
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: CopyFiles@2
@@ -101,6 +138,21 @@ extends:
                   SourceFolder: '$(Build.Repository.LocalPath)/build/dokka/zip'
                   Contents: '**/*.zip'
                   TargetFolder: '$(build.artifactstagingdirectory)'
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: ArchiveFiles@2
+                displayName: 'Zip maven-staging for artifact'
+                inputs:
+                  rootFolderOrFile: '$(Build.Repository.LocalPath)/build/maven-staging'
+                  includeRootFolder: false
+                  archiveType: 'zip'
+                  archiveFile: '$(build.artifactstagingdirectory)/maven-staging.zip'
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+              - task: DeleteFiles@1
+                displayName: 'Delete maven-staging to avoid SpotBugs scan'
+                inputs:
+                  SourceFolder: '$(Build.Repository.LocalPath)/build/maven-staging'
+                  Contents: '**/*'
+                  RemoveSourceFolder: true
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
             templateContext:
               outputs:
@@ -125,6 +177,19 @@ extends:
                 - input: pipelineArtifact
                   artifactName: SDK
             steps:
+              - task: AzureKeyVault@2
+                displayName: 'Fetch ESRP secrets from Key Vault'
+                inputs:
+                  azureSubscription: 'Cross Device SDK ESRP Service Connection'
+                  KeyVaultName: 'ESRP-Cert-KeyVault'
+                  SecretsFilter: 'ESRP-Release-Owners,ESRP-Release-Approvers'
+                  RunAsPreJob: false
+              - task: ExtractFiles@1
+                displayName: 'Extract maven-staging.zip'
+                inputs:
+                  archiveFilePatterns: '$(Pipeline.Workspace)/maven-staging.zip'
+                  destinationFolder: '$(Pipeline.Workspace)/maven'
+                  cleanDestinationFolder: true
               - task: GitHubRelease@1
                 displayName: 'Create GitHub Release'
                 inputs:
@@ -137,3 +202,23 @@ extends:
                   assets: '$(Pipeline.Workspace)/*.aar'
                   changeLogCompareToRelease: 'lastFullRelease'
                   changeLogType: 'commitBased'
+              # ESRP Release for Maven Central Publishing
+              - task: EsrpRelease@10
+                displayName: 'ESRP Release Maven Artifacts'
+                inputs:
+                  connectedservicename: 'Cross Device SDK ESRP Service Connection'
+                  usemanagedidentity: true
+                  keyvaultname: 'ESRP-Cert-KeyVault'
+                  signcertname: 'CrossDevice-SDK-ESRP-Certificate'
+                  clientid: '18f6f9c6-c93f-408c-a266-f152d8974ad2'
+                  intent: 'PackageDistribution'
+                  contenttype: 'Maven'
+                  contentsource: 'Folder'
+                  folderlocation: '$(Pipeline.Workspace)/maven'
+                  waitforreleasecompletion: true
+                  owners: '$(ESRP-Release-Owners)'
+                  approvers: '$(ESRP-Release-Approvers)'
+                  serviceendpointurl: 'https://api.esrp.microsoft.com'
+                  mainpublisher: 'MavenCentral'
+                  domaintenantid: 'cdc5aeea-15c5-4db6-b079-fcadd2505dc2'
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))

@@ -53,8 +53,17 @@ You will receive:
 
 ## Configure Your Android Development Environment
 
-1. Download the `.aar` file from [Windows Cross-Device SDK releases](https://github.com/microsoft/Windows-Cross-Device/releases) add them to the project.
-2. Add the SDK to your project dependencies.
+1. Download the `.aar` file from [Windows Cross-Device SDK releases](https://github.com/microsoft/Windows-Cross-Device/releases).
+2. Copy the `.aar` file to your project's `libs` folder (create if it doesn't exist).
+3. Add the following to your app's `build.gradle`:
+
+   ```groovy
+   dependencies {
+       implementation files('libs/crossdevicesdk-continuity-x.x.x-release.aar')
+   }
+   ```
+
+4. Sync your project with Gradle files.
 
 ---
 
@@ -71,7 +80,7 @@ To participate in the app context contract, meta-data must be declared for the s
 
   ```xml
   <meta-data
-  android:name="com.microsoft.crossdevice.resumeActivityProvider
+  android:name="com.microsoft.crossdevice.resumeActivityProvider"
   android:value="true" />
   ```
 
@@ -120,7 +129,7 @@ RESUME_ACTIVITY:     4
 #### Example (Cross Device Resume):
 
 ```xml
-<meta-data android:name="com.microsoft.crossdevice.applicationContextProvider" android:value="true" />
+<meta-data android:name="com.microsoft.crossdevice.resumeActivityProvider" android:value="true" />
 <meta-data android:name="com.microsoft.crossdevice.trigger.PartnerApp" android:value="4" />
 ```
 
@@ -150,7 +159,7 @@ AppContextManager.sendAppContext(context, appContext, appContextResponse)
 
 ### Full SDK Usage Example
 
-#### Cross Device Resume (Also see the full example in [Sample App](./partnerapptriggertestapp/))
+#### Cross Device Resume (Also see the full example in [Sample App](../partnerapptriggertestapp/))
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -484,12 +493,4 @@ Notes
 
 ## Build local AAR
 
-Clone the repo and Configure `local.properties` file in the project root with following properties.
-
-```java
-ado_reader=local
-ado_reader_ms_pass=null
-ado_reader_mmxsdk_pass=null
-```
-
-Then you can run `assemble` to generate the local aar or run `partnerapptriggertestapp` to install the test app.
+Clone the repo and run `assemble` to generate the local AAR, or run `partnerapptriggertestapp` to install the test app.
