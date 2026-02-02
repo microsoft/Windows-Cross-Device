@@ -121,7 +121,3 @@ To receive the result of sending/deleting app context, a concrete class that imp
 - [com.microsoft.crossdevicesdk.continuity.IAppContextResponse.onContextResponseError]
 
 When deInitializing, the app should call [com.microsoft.crossdevicesdk.continuity.AppContextManager.deInitialize] to unregister the callback. After this, any app context should not be sent to the host app.
-
-
-
-package com.microsoft.crossdevicesdk.continuity

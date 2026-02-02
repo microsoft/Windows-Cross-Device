@@ -25,4 +25,3 @@ Notification.Builder(context,"<notification-channel>")
 
 
 Note: Cross Platform Installations are handled by Link to Windows which will leverage this CrossDeviceExtender to verify publisher website to redirect installations on cross platform devices
-package com.microsoft.crossdevicesdk.crossdeviceextender
