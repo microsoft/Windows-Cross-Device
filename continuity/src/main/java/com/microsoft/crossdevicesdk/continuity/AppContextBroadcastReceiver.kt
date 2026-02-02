@@ -14,7 +14,7 @@ import java.security.InvalidParameterException
 /**
  * Helper class used to implement a broadcast receiver for app context broadcasts.
  */
-class AppContextBroadcastReceiver : BroadcastReceiver() {
+internal class AppContextBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(
         context: Context,
         intent: Intent,
