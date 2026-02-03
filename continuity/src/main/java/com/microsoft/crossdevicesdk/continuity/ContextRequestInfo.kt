@@ -9,12 +9,14 @@ package com.microsoft.crossdevicesdk.continuity
  */
 class ContextRequestInfo {
     private val values: MutableMap<String?, Any> = HashMap()
+
+    /**
+     * The type flag that indicates which app context type is requested to send.
+     * -1 represents invalid type.
+     * @see ProtocolConstants.TYPE_BROWSER_HISTORY
+     * @see ProtocolConstants.TYPE_RESUME_ACTIVITY
+     */
     var type: Int
-        /**
-         * Get type. The FLAG indicates which app context type is requested to send.
-         * -1 represents invalid type.
-         * @return the type (e.g. [ProtocolConstants.TYPE_BROWSER_HISTORY])
-         */
         get() {
             val value = values[ProtocolConstants.APPCONTEXT_TYPE_KEY]
             return value?.toString()?.toInt() ?: -1

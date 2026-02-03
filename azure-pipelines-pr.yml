@@ -58,23 +58,12 @@ extends:
                 submodules: false
                 fetchDepth: 1
                 fetchTags: false
-              - task: AzureCLI@2
-                displayName: 'Generate managed identity access token for maven feeds'
-                inputs:
-                  azureSubscription: 'MXP-ES-Service-WestUS2'
-                  scriptType: 'pscore'
-                  scriptLocation: 'inlineScript'
-                  inlineScript: |
-                    $accessToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
-                    Write-Host "##vso[task.setvariable variable=ado_reader]MXP-ES-Service-WestUS2"
-                    Write-Host "##vso[task.setvariable variable=ado_reader_mmxsdk_pass;issecret=true]$accessToken"
-                    Write-Host "##vso[task.setvariable variable=ado_reader_ms_pass;issecret=true]$accessToken"
               - task: Gradle@2
                 displayName: 'Build Cross Device SDK release aar'
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleRelease'
                   publishJUnitResults: false
@@ -84,7 +73,7 @@ extends:
                 inputs:
                   gradleWrapperFile: gradlew
                   workingDirectory: $(Build.Repository.LocalPath)
-                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                  options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild)'
                   jdkVersionOption: $(jdkVersion)
                   tasks: 'assembleDebug'
                   publishJUnitResults: false
@@ -100,24 +89,13 @@ extends:
               submodules: false
               fetchDepth: 1
               fetchTags: false
-            - task: AzureCLI@2
-              displayName: 'Generate managed identity access token for maven feeds'
-              inputs:
-                azureSubscription: 'MXP-ES-Service-WestUS2'
-                scriptType: 'pscore'
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  $accessToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
-                  Write-Host "##vso[task.setvariable variable=ado_reader]MXP-ES-Service-WestUS2"
-                  Write-Host "##vso[task.setvariable variable=ado_reader_mmxsdk_pass;issecret=true]$accessToken"
-                  Write-Host "##vso[task.setvariable variable=ado_reader_ms_pass;issecret=true]$accessToken"
             - task: Gradle@2
               displayName: 'Kotlin ktlint'
               inputs:
                 gradleWrapperFile: gradlew
                 workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'ktlintCheck'
-                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild)'
                 jdkVersionOption: $(jdkVersion)
               condition: succeededOrFailed()
 
@@ -127,6 +105,6 @@ extends:
                 gradleWrapperFile: gradlew
                 workingDirectory: $(Build.Repository.LocalPath)
                 tasks: 'detekt'
-                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild) -Pado_reader=$(ado_reader) -Pado_reader_mmxsdk_pass=$(ado_reader_mmxsdk_pass) -Pado_reader_ms_pass=$(ado_reader_ms_pass)'
+                options: '-PbuildNumber=$(versionMajor).$(versionMinor).$(versionBuild)'
                 jdkVersionOption: $(jdkVersion)
               condition: succeededOrFailed()
