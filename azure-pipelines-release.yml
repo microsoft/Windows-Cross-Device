@@ -128,7 +128,7 @@ extends:
                 displayName: 'Copy AAR Files to: $(build.artifactstagingdirectory)'
                 inputs:
                   SourceFolder: '$(Build.Repository.LocalPath)'
-                  Contents: '**/build/outputs/aar/**/release/*.aar'
+                  Contents: '**/build/outputs/aar/*.aar'
                   TargetFolder: '$(build.artifactstagingdirectory)'
                   flattenFolders: true
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
