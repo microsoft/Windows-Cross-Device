@@ -1,6 +1,11 @@
 apply plugin: "maven-publish"
 apply plugin: "signing"
 
+// Disable Gradle Module Metadata generation (only publish POM)
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
 // Task to generate sources JAR
 tasks.register('sourcesJar', Jar) {
     archiveClassifier.set('sources')
@@ -17,11 +22,11 @@ tasks.register('javadocJar', Jar) {
 afterEvaluate {
     publishing {
         publications {
-            releaseAndDebug(MavenPublication) {
+            release(MavenPublication) {
                 groupId "${rootProject.ext.mavenGroupId}"
                 artifactId "${rootProject.ext.build_sdkName}-${project.name}"
                 version "${rootProject.ext.componentizedSDKVersion}"
-                from(components.releaseAndDebug)
+                from(components.release)
 
                 // Add sources and javadoc JARs
                 artifact(sourcesJar)
@@ -71,6 +76,6 @@ afterEvaluate {
         required { project.hasProperty('signing.keyId') }
 
         // Sign all publications
-        sign publishing.publications.releaseAndDebug
+        sign publishing.publications.release
     }
 }

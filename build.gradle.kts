@@ -145,7 +145,7 @@ tasks.register("separateDocZipped") {
 tasks.register("publishToMavenCentralStaging") {
     description = "Publishes continuity module to local staging directory for ESRP Maven Central publishing"
     group = "publishing"
-    dependsOn("continuity:publishReleaseAndDebugPublicationToMavenCentralStagingRepository")
+    dependsOn("continuity:publishReleasePublicationToMavenCentralStagingRepository")
 }
 
 subprojects {
@@ -153,9 +153,7 @@ subprojects {
         if (plugins.hasPlugin("com.android.library")) {
             extensions.configure<com.android.build.gradle.LibraryExtension> {
                 publishing {
-                    multipleVariants("releaseAndDebug") {
-                        includeBuildTypeValues("debug", "release")
-                    }
+                    singleVariant("release")
                 }
 
                 buildFeatures {

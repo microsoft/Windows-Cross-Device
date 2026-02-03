@@ -53,7 +53,7 @@ extends:
                   workingDirectory: $(Build.Repository.LocalPath)
                   options: '-PbuildNumber=$(buildNumber)'
                   jdkVersionOption: $(jdkVersion)
-                  tasks: 'assemble'
+                  tasks: 'assembleRelease'
                   publishJUnitResults: false
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: Gradle@2
@@ -128,7 +128,7 @@ extends:
                 displayName: 'Copy AAR Files to: $(build.artifactstagingdirectory)'
                 inputs:
                   SourceFolder: '$(Build.Repository.LocalPath)'
-                  Contents: '**/build/outputs/aar/**/*.aar'
+                  Contents: '**/build/outputs/aar/**/release/*.aar'
                   TargetFolder: '$(build.artifactstagingdirectory)'
                   flattenFolders: true
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
