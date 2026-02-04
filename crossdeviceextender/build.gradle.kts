@@ -56,7 +56,8 @@ android {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
             val sdkName = rootProject.extra["build_sdkName"] as String
             val version = rootProject.extra["versionName"] as String
-            output.outputFileName = "$sdkName-${project.name}-$version-$name.aar"
+            val suffix = if (name == "release") "" else "-$name"
+            output.outputFileName = "$sdkName-${project.name}-$version$suffix.aar"
         }
     }
     kotlinOptions {
