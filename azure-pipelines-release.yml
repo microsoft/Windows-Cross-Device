@@ -219,6 +219,6 @@ extends:
                   owners: '$(ESRP-Release-Owners)'
                   approvers: '$(ESRP-Release-Approvers)'
                   serviceendpointurl: 'https://api.esrp.microsoft.com'
-                  mainpublisher: 'MavenCentral'
+                  mainpublisher: 'ESRPRELPACMAN'
                   domaintenantid: 'cdc5aeea-15c5-4db6-b079-fcadd2505dc2'
                 condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
