@@ -1,5 +1,7 @@
 # Continuity SDK
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.mmx/crossdevicesdk-continuity)](https://central.sonatype.com/artifact/com.microsoft.mmx/crossdevicesdk-continuity)
+
 Enables Android apps to send app context to the Link to Windows (LTW) app, allowing users to resume activities on their Windows PCs.
 
 ---
@@ -52,8 +54,6 @@ You will receive:
 ---
 
 ## Configure Your Android Development Environment
-
-[![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.mmx/crossdevicesdk-continuity)](https://central.sonatype.com/artifact/com.microsoft.mmx/crossdevicesdk-continuity)
 
 Add the dependency to your app's `build.gradle`:
 
