@@ -84,6 +84,16 @@ object AppContextManager : IAppContextManager {
 
         addDefaultValue(context, appContext)
 
+        if (action != ProtocolConstants.APPCONTEXT_ACTION_DELETE) {
+            runCatching {
+                validateTimestamp(appContext)
+            }.onFailure { e ->
+                LogUtils.e(TAG, e.message!!, e)
+                responseCallback.get()?.onContextResponseError(appContext, e)
+                return
+            }
+        }
+
         coroutineScope.launch {
             runCatching {
                 context.contentResolver.insert(
@@ -218,6 +228,20 @@ object AppContextManager : IAppContextManager {
                         ":invalid when sending app context"
                 )
             }
+        }
+    }
+
+    private fun validateTimestamp(appContext: AppContext) {
+        val lastUpdatedTime = appContext.lastUpdatedTime
+        val lifeTime = appContext.lifeTime
+        val currentTime = System.currentTimeMillis()
+
+        if (lifeTime >= 0 && lastUpdatedTime + lifeTime < currentTime) {
+            throw InvalidParameterException(
+                "${ProtocolConstants.APPCONTEXT_LAST_UPDATED_TIME_KEY}:invalid timestamp. " +
+                    "The context has already expired (lastUpdatedTime + lifeTime < currentTime). " +
+                    "lastUpdatedTime=$lastUpdatedTime, lifeTime=$lifeTime, currentTime=$currentTime."
+            )
         }
     }
 

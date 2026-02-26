@@ -45,9 +45,9 @@ class AppContext {
         }
 
     /**
-     * Timestamp representing the create time of the app context.
+     * Unix timestamp in milliseconds representing the create time of the app context.
      *
-     * This is required.
+     * This is required. Suggest using [System.currentTimeMillis].
      */
     var createTime: Long
         get() {
@@ -59,9 +59,10 @@ class AppContext {
         }
 
     /**
-     * Timestamp representing the last updated time of the app context.
+     * Unix timestamp in milliseconds representing the last updated time of the app context.
      *
-     * This is required. Any time when any fields of app context is updated, the updated time needs to be recorded.
+     * This is required. Suggest using [System.currentTimeMillis].
+     * Any time when any fields of app context is updated, the updated time needs to be recorded.
      */
     var lastUpdatedTime: Long
         get() {
