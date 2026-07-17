@@ -151,7 +151,7 @@ class AppContext {
         }
 
     /**
-     * The URI to download the PC app used to continue the app context on the PC.
+     * The download URL of the PC app on the desktop, used when the app is not available in the store.
      *
      * This is optional. Must be http:// or https:// based URI.
      * @throws IllegalArgumentException if the pc app download url exceeds 2083 characters
