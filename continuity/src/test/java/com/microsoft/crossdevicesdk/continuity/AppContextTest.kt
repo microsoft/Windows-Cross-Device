@@ -30,6 +30,7 @@ class AppContextTest {
         val contextId = "com.microsoft.example.xdr.a"
         val packageName = "com.microsoft .crossdevicesdk"
         val webUri = "https://www.microsoft.com/crossdevicesdk.docx"
+        val pcAppDownloadUrl = "https://www.microsoft.com/crossdevicesdk/download"
         val title = "cross device sdk"
         val contextType = ProtocolConstants.TYPE_APPLICATION_CONTEXT
         val lifeTime = 1000L
@@ -42,6 +43,7 @@ class AppContextTest {
         appContext.appId = packageName
         appContext.contextId = contextId
         appContext.webLink = webUri
+        appContext.pcAppDownloadUrl = pcAppDownloadUrl
         appContext.title = title
         appContext.lifeTime = lifeTime
         appContext.extras = extra
@@ -51,6 +53,10 @@ class AppContextTest {
         assertEquals(packageName, values.getAsString(ProtocolConstants.APPCONTEXT_APP_ID_KEY))
         assertEquals(contextId, values.getAsString(ProtocolConstants.APPCONTEXT_CONTEXT_ID_KEY))
         assertEquals(webUri, values.getAsString(ProtocolConstants.APPCONTEXT_WEBLINK_KEY))
+        assertEquals(
+            pcAppDownloadUrl,
+            values.getAsString(ProtocolConstants.APPCONTEXT_PC_APP_DOWNLOAD_URL_KEY)
+        )
         assertEquals(title, values.getAsString(ProtocolConstants.APPCONTEXT_TITLE_KEY))
         assertEquals(lifeTime, values.getAsLong(ProtocolConstants.APPCONTEXT_LIFE_TIME_KEY))
         assertEquals(

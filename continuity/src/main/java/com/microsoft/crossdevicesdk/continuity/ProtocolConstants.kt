@@ -63,6 +63,7 @@ object ProtocolConstants {
     internal const val APPCONTEXT_APP_ID_KEY = "packageName"
     internal const val APPCONTEXT_TITLE_KEY = "title"
     internal const val APPCONTEXT_WEBLINK_KEY = "webLink"
+    internal const val APPCONTEXT_PC_APP_DOWNLOAD_URL_KEY = "pcAppDownloadUrl"
     internal const val APPCONTEXT_PREVIEW_KEY = "preview"
     internal const val APPCONTEXT_EXTRAS_KEY = "extras"
     internal const val APPCONTEXT_CREATE_TIME_KEY = "createTime"
