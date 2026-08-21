@@ -179,7 +179,8 @@ class AppContext {
     /**
      * The lifetime of the app context in milliseconds.
      *
-     * This is optional. Only used for ongoing scenario, if not set, the default value is -1.
+     * This is optional. Missing, non-positive, and greater-than-five-minute values are
+     * normalized to five minutes when the app context is sent.
      */
     var lifeTime: Long
         get() {

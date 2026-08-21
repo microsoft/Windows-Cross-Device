@@ -11,7 +11,6 @@ import android.content.SharedPreferences
 import android.net.Uri
 import java.lang.ref.WeakReference
 import java.security.InvalidParameterException
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -148,13 +147,10 @@ object AppContextManager : IAppContextManager {
         context: Context,
         appContext: AppContext,
     ) {
-        appContext.lifeTime =
-            appContext.takeIf { !it.hasValue(ProtocolConstants.APPCONTEXT_LIFE_TIME_KEY) }
-                ?.let {
-                    TimeUnit.MILLISECONDS.convert(
-                        ProtocolConstants.APPCONTEXT_DEFAULT_DAYS, TimeUnit.DAYS
-                    )
-                } ?: appContext.lifeTime
+        val lifeTime = appContext
+            .takeIf { it.hasValue(ProtocolConstants.APPCONTEXT_LIFE_TIME_KEY) }
+            ?.lifeTime
+        appContext.lifeTime = normalizeAppContextLifeTime(lifeTime)
 
         appContext.appId =
             appContext.takeIf { !it.hasValue(ProtocolConstants.APPCONTEXT_APP_ID_KEY) }
