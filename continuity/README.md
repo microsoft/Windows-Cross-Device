@@ -4,6 +4,8 @@
 
 Enables Android apps to send app context to the Link to Windows (LTW) app, allowing users to resume activities on their Windows PCs.
 
+See [What's new](./CHANGELOG.md) for consumer-facing behavior changes between SDK releases.
+
 ---
 
 ## Overview
