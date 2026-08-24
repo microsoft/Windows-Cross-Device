@@ -68,8 +68,8 @@ object ProtocolConstants {
     internal const val APPCONTEXT_CREATE_TIME_KEY = "createTime"
     internal const val APPCONTEXT_LAST_UPDATED_TIME_KEY = "lastUpdatedTime"
     internal const val APPCONTEXT_LIFE_TIME_KEY = "lifeTime"
-    internal const val RESUME_ACTIVITY_DEFAULT_LIFE_TIME_MILLIS = 5L * 60 * 1000
-    internal const val RESUME_ACTIVITY_MAX_LIFE_TIME_MILLIS = 5L * 60 * 1000
+    internal const val APPCONTEXT_DEFAULT_LIFE_TIME_MILLIS = 5L * 60 * 1000
+    internal const val APPCONTEXT_MAX_LIFE_TIME_MILLIS = 5L * 60 * 1000
     internal const val APPCONTEXT_ACTION_KEY = "action"
     internal const val APPCONTEXT_ACTION_UPSERT = "upsert"
     internal const val APPCONTEXT_ACTION_DELETE = "delete"
@@ -91,6 +91,4 @@ object ProtocolConstants {
     internal const val APPCONTEXT_BROWSER_TITLE_KEY = "title"
     internal const val APPCONTEXT_BROWSER_TIMESTAMP_KEY = "timestamp"
     internal const val APPCONTEXT_BROWSER_FAVICON_KEY = "favicon"
-
-    internal const val APPCONTEXT_DEFAULT_DAYS = 30L
 }
