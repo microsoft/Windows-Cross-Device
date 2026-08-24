@@ -70,7 +70,7 @@ object AppContextManager : IAppContextManager {
         runCatching {
             checkRequiredValues(context, appContext, action)
         }.onFailure { e ->
-            LogUtils.e(TAG, e.message!!, e)
+            LogUtils.e(TAG, e.message ?: e.toString(), e)
             responseCallback.get()?.onContextResponseError(appContext, e)
             return
         }
@@ -87,7 +87,7 @@ object AppContextManager : IAppContextManager {
                 validateTimestamp(appContext)
             }
         }.onFailure { e ->
-            LogUtils.e(TAG, e.message!!, e)
+            LogUtils.e(TAG, e.message ?: e.toString(), e)
             responseCallback.get()?.onContextResponseError(appContext, e)
             return
         }
@@ -109,7 +109,7 @@ object AppContextManager : IAppContextManager {
                     responseCallback.get()?.onContextResponseSuccess(appContext)
                 }
             }.onFailure { e ->
-                LogUtils.e(TAG, e.message!!, e)
+                LogUtils.e(TAG, e.message ?: e.toString(), e)
                 responseCallback.get()?.onContextResponseError(appContext, e)
             }
         }

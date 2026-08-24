@@ -24,9 +24,13 @@ class AppContextLifeTimeTest {
     @Test
     fun normalizeAppContextLifeTimeRejectsNonPositiveValues() {
         listOf(-1L, 0L).forEach { lifeTime ->
-            assertThrows(InvalidParameterException::class.java) {
+            val exception = assertThrows(InvalidParameterException::class.java) {
                 normalizeAppContextLifeTime(lifeTime)
             }
+            assertEquals(
+                "lifeTime: must be positive when sending app context",
+                exception.message,
+            )
         }
     }
 }

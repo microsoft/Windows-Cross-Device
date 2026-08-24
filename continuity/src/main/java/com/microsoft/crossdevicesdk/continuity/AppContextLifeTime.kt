@@ -10,7 +10,7 @@ internal fun normalizeAppContextLifeTime(lifeTime: Long?): Long =
     when {
         lifeTime == null -> ProtocolConstants.APPCONTEXT_DEFAULT_LIFE_TIME_MILLIS
         lifeTime <= 0 -> throw InvalidParameterException(
-            "${ProtocolConstants.APPCONTEXT_LIFE_TIME_KEY}:" +
+            "${ProtocolConstants.APPCONTEXT_LIFE_TIME_KEY}: " +
                 "must be positive when sending app context"
         )
         lifeTime <= ProtocolConstants.APPCONTEXT_MAX_LIFE_TIME_MILLIS -> lifeTime
