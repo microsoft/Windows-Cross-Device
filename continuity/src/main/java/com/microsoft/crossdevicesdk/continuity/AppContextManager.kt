@@ -81,16 +81,15 @@ object AppContextManager : IAppContextManager {
 
         setAppContextVersion(preferences, appContext)
 
-        addDefaultValue(context, appContext)
-
-        if (action != ProtocolConstants.APPCONTEXT_ACTION_DELETE) {
-            runCatching {
+        runCatching {
+            addDefaultValue(context, appContext)
+            if (action != ProtocolConstants.APPCONTEXT_ACTION_DELETE) {
                 validateTimestamp(appContext)
-            }.onFailure { e ->
-                LogUtils.e(TAG, e.message!!, e)
-                responseCallback.get()?.onContextResponseError(appContext, e)
-                return
             }
+        }.onFailure { e ->
+            LogUtils.e(TAG, e.message!!, e)
+            responseCallback.get()?.onContextResponseError(appContext, e)
+            return
         }
 
         coroutineScope.launch {

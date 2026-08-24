@@ -179,9 +179,11 @@ class AppContext {
     /**
      * The lifetime of the app context in milliseconds.
      *
-     * This is optional. For [ProtocolConstants.TYPE_RESUME_ACTIVITY], missing, non-positive,
-     * and greater-than-five-minute values are normalized to five minutes when the app context
-     * is sent. Other app context types retain the 30-day default when this value is missing.
+     * This is optional. For [ProtocolConstants.TYPE_RESUME_ACTIVITY], a missing or
+     * greater-than-five-minute value is normalized to five minutes when the app context is sent.
+     * An explicit non-positive value rejects the send through
+     * [IAppContextResponse.onContextResponseError]. Other app context types retain the 30-day
+     * default when this value is missing.
      */
     var lifeTime: Long
         get() {

@@ -4,8 +4,10 @@
  */
 package com.microsoft.crossdevicesdk.continuity
 
+import java.security.InvalidParameterException
 import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class AppContextLifeTimeTest {
@@ -16,11 +18,18 @@ class AppContextLifeTimeTest {
         val type = ProtocolConstants.TYPE_RESUME_ACTIVITY
 
         assertEquals(defaultLifeTime, normalizeAppContextLifeTime(type, null))
-        assertEquals(defaultLifeTime, normalizeAppContextLifeTime(type, -1))
-        assertEquals(defaultLifeTime, normalizeAppContextLifeTime(type, 0))
         assertEquals(1L, normalizeAppContextLifeTime(type, 1))
         assertEquals(maximumLifeTime, normalizeAppContextLifeTime(type, maximumLifeTime))
         assertEquals(defaultLifeTime, normalizeAppContextLifeTime(type, maximumLifeTime + 1))
+    }
+
+    @Test
+    fun normalizeAppContextLifeTimeRejectsNonPositiveResumeActivityValues() {
+        listOf(-1L, 0L).forEach { lifeTime ->
+            assertThrows(InvalidParameterException::class.java) {
+                normalizeAppContextLifeTime(ProtocolConstants.TYPE_RESUME_ACTIVITY, lifeTime)
+            }
+        }
     }
 
     @Test
