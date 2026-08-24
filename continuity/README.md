@@ -480,7 +480,7 @@ Notes
 | `weblink`<br/>[optional]          | The URL of the webpage to load in a browser to continue the app context.                                                      | The maximum length is 2083 characters.                                                                                           |
 | `preview`<br/>[optional]          | Bytes of the preview image that can represent the app context                                                                 |                                                                                                                                  |
 | `extras`<br/>[optional]           | A key-value pair object containing app-specific state information needed to continue an app context on the continuing device. | Need to provide when the app context has its unique data.                                                                        |
-| `LifeTime`<br/> [optional]        | The lifetime of the app context in milliseconds.                                                                              | The default and maximum supported value is 5 minutes. Missing, non-positive, and greater-than-five-minute values are normalized to 5 minutes. |
+| `LifeTime`<br/> [optional]        | The lifetime of the app context in milliseconds.                                                                              | For Cross Device Resume, the default and maximum supported value is 5 minutes; missing, non-positive, and greater-than-five-minute values are normalized to 5 minutes. Other context types default to 30 days when the value is missing. |
 
 ### BrowserContext
 
