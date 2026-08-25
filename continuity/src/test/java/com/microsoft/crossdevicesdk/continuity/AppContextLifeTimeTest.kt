@@ -6,6 +6,7 @@ package com.microsoft.crossdevicesdk.continuity
 
 import java.security.InvalidParameterException
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -38,23 +39,14 @@ class AppContextLifeTimeTest {
     }
 
     @Test
-    fun normalizeAppContextLifeTimePreservesBrowserHistoryRetention() {
+    fun normalizeAppContextLifeTimeOmitsBrowserHistoryLifeTime() {
         val type = ProtocolConstants.TYPE_BROWSER_HISTORY
-        val nonExpiringLifeTime = ProtocolConstants.BROWSER_HISTORY_LIFE_TIME_MILLIS
         val overAppContextLimit = ProtocolConstants.APPCONTEXT_MAX_LIFE_TIME_MILLIS + 1
 
-        assertEquals(nonExpiringLifeTime, normalizeAppContextLifeTime(type, null))
-        assertEquals(nonExpiringLifeTime, normalizeAppContextLifeTime(type, nonExpiringLifeTime))
-        assertEquals(1L, normalizeAppContextLifeTime(type, 1L))
-        assertEquals(overAppContextLimit, normalizeAppContextLifeTime(type, overAppContextLimit))
-    }
-
-    @Test
-    fun normalizeAppContextLifeTimeRejectsOtherNonPositiveBrowserHistoryValues() {
-        listOf(-2L, 0L).forEach { lifeTime ->
-            assertThrows(InvalidParameterException::class.java) {
-                normalizeAppContextLifeTime(ProtocolConstants.TYPE_BROWSER_HISTORY, lifeTime)
-            }
-        }
+        assertNull(normalizeAppContextLifeTime(type, null))
+        assertNull(normalizeAppContextLifeTime(type, -1L))
+        assertNull(normalizeAppContextLifeTime(type, 0L))
+        assertNull(normalizeAppContextLifeTime(type, 1L))
+        assertNull(normalizeAppContextLifeTime(type, overAppContextLimit))
     }
 }
