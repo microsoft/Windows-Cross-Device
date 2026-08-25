@@ -4,14 +4,16 @@
 
 ### Changed
 
-- App-context lifetime now defaults to five minutes and is capped at five minutes for every app
-  context type. When `AppContextManager.sendAppContext` is called, a missing `lifeTime` defaults
-  to `300000` milliseconds, a greater value is capped at `300000`, and an explicit non-positive
-  value rejects the send through `IAppContextResponse.onContextResponseError`. Positive values
-  below five minutes are preserved.
+- App-context lifetime now defaults to five minutes and is capped at five minutes except for
+  Browser History. When `AppContextManager.sendAppContext` is called for another context type, a
+  missing `lifeTime` defaults to `300000` milliseconds, a greater value is capped at `300000`, and
+  an explicit non-positive value rejects the send through
+  `IAppContextResponse.onContextResponseError`. Browser History retains `-1` as its non-expiring
+  default, preserves explicit positive lifetimes, and rejects other non-positive values.
 
 ### Consumer impact
 
-- Apps that previously relied on the 30-day default, a lifetime greater than five minutes, or a
-  non-expiring value must now use a positive lifetime, refresh `lastUpdatedTime`, and resend the
-  context before the five-minute window expires.
+- Apps sending non-Browser-History contexts that previously relied on the 30-day default, a
+  lifetime greater than five minutes, or a non-expiring value must now use a positive lifetime,
+  refresh `lastUpdatedTime`, and resend the context before the five-minute window expires. Browser
+  History remains non-expiring by default and is retained until explicitly replaced or cleared.

@@ -91,4 +91,5 @@ object ProtocolConstants {
     internal const val APPCONTEXT_BROWSER_TITLE_KEY = "title"
     internal const val APPCONTEXT_BROWSER_TIMESTAMP_KEY = "timestamp"
     internal const val APPCONTEXT_BROWSER_FAVICON_KEY = "favicon"
+    internal const val BROWSER_HISTORY_LIFE_TIME_MILLIS = -1L
 }
