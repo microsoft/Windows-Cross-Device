@@ -11,7 +11,6 @@ import android.content.SharedPreferences
 import android.net.Uri
 import java.lang.ref.WeakReference
 import java.security.InvalidParameterException
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,7 +70,7 @@ object AppContextManager : IAppContextManager {
         runCatching {
             checkRequiredValues(context, appContext, action)
         }.onFailure { e ->
-            LogUtils.e(TAG, e.message!!, e)
+            LogUtils.e(TAG, e.message ?: e.toString(), e)
             responseCallback.get()?.onContextResponseError(appContext, e)
             return
         }
@@ -82,16 +81,15 @@ object AppContextManager : IAppContextManager {
 
         setAppContextVersion(preferences, appContext)
 
-        addDefaultValue(context, appContext)
-
-        if (action != ProtocolConstants.APPCONTEXT_ACTION_DELETE) {
-            runCatching {
+        runCatching {
+            addDefaultValue(context, appContext)
+            if (action != ProtocolConstants.APPCONTEXT_ACTION_DELETE) {
                 validateTimestamp(appContext)
-            }.onFailure { e ->
-                LogUtils.e(TAG, e.message!!, e)
-                responseCallback.get()?.onContextResponseError(appContext, e)
-                return
             }
+        }.onFailure { e ->
+            LogUtils.e(TAG, e.message ?: e.toString(), e)
+            responseCallback.get()?.onContextResponseError(appContext, e)
+            return
         }
 
         coroutineScope.launch {
@@ -111,7 +109,7 @@ object AppContextManager : IAppContextManager {
                     responseCallback.get()?.onContextResponseSuccess(appContext)
                 }
             }.onFailure { e ->
-                LogUtils.e(TAG, e.message!!, e)
+                LogUtils.e(TAG, e.message ?: e.toString(), e)
                 responseCallback.get()?.onContextResponseError(appContext, e)
             }
         }
@@ -148,13 +146,10 @@ object AppContextManager : IAppContextManager {
         context: Context,
         appContext: AppContext,
     ) {
-        appContext.lifeTime =
-            appContext.takeIf { !it.hasValue(ProtocolConstants.APPCONTEXT_LIFE_TIME_KEY) }
-                ?.let {
-                    TimeUnit.MILLISECONDS.convert(
-                        ProtocolConstants.APPCONTEXT_DEFAULT_DAYS, TimeUnit.DAYS
-                    )
-                } ?: appContext.lifeTime
+        val lifeTime = appContext
+            .takeIf { it.hasValue(ProtocolConstants.APPCONTEXT_LIFE_TIME_KEY) }
+            ?.lifeTime
+        appContext.lifeTime = normalizeAppContextLifeTime(lifeTime)
 
         appContext.appId =
             appContext.takeIf { !it.hasValue(ProtocolConstants.APPCONTEXT_APP_ID_KEY) }
@@ -240,7 +235,8 @@ object AppContextManager : IAppContextManager {
             throw InvalidParameterException(
                 "${ProtocolConstants.APPCONTEXT_LAST_UPDATED_TIME_KEY}:invalid timestamp. " +
                     "The context has already expired (lastUpdatedTime + lifeTime < currentTime). " +
-                    "lastUpdatedTime=$lastUpdatedTime, lifeTime=$lifeTime, currentTime=$currentTime."
+                    "lastUpdatedTime=$lastUpdatedTime, lifeTime=$lifeTime, " +
+                    "currentTime=$currentTime."
             )
         }
     }

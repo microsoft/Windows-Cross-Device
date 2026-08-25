@@ -4,6 +4,8 @@
 
 Enables Android apps to send app context to the Link to Windows (LTW) app, allowing users to resume activities on their Windows PCs.
 
+See [What's new](./CHANGELOG.md) for consumer-facing behavior changes between SDK releases.
+
 ---
 
 ## Overview
@@ -478,7 +480,7 @@ Notes
 | `weblink`<br/>[optional]          | The URL of the webpage to load in a browser to continue the app context.                                                      | The maximum length is 2083 characters.                                                                                           |
 | `preview`<br/>[optional]          | Bytes of the preview image that can represent the app context                                                                 |                                                                                                                                  |
 | `extras`<br/>[optional]           | A key-value pair object containing app-specific state information needed to continue an app context on the continuing device. | Need to provide when the app context has its unique data.                                                                        |
-| `LifeTime`<br/> [optional]        | The lifetime of the app context in milliseconds.                                                                              | Only used for ongoing scenario, if not set, the default value is 30 days.<br/>For XDR: the maximum supported value is 5 minutes. |
+| `LifeTime`<br/> [optional]        | The lifetime of the app context in milliseconds.                                                                              | For every app context type, the default and maximum supported value is 5 minutes. Missing values default to 5 minutes, greater values are capped at 5 minutes, and explicit non-positive values reject the send through `onContextResponseError`. |
 
 ### BrowserContext
 
