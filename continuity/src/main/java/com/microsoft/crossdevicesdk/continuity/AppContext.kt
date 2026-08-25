@@ -179,10 +179,10 @@ class AppContext {
     /**
      * The lifetime of the app context in milliseconds.
      *
-     * This is optional and not used by Browser History, whose retention is controlled by the
-     * receiver. For other app context types, a missing value defaults to five minutes and a
-     * greater value is capped at five minutes. Explicit non-positive values reject the send
-     * through [IAppContextResponse.onContextResponseError].
+     * This is optional. Browser History retains its 30-day default and preserves explicit values.
+     * Other app context types default to five minutes and are capped at five minutes. Explicit
+     * non-positive values for non-Browser-History contexts reject the send through
+     * [IAppContextResponse.onContextResponseError].
      */
     var lifeTime: Long
         get() {

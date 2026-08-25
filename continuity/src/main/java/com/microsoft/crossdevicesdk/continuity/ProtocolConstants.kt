@@ -70,6 +70,8 @@ object ProtocolConstants {
     internal const val APPCONTEXT_LIFE_TIME_KEY = "lifeTime"
     internal const val APPCONTEXT_DEFAULT_LIFE_TIME_MILLIS = 5L * 60 * 1000
     internal const val APPCONTEXT_MAX_LIFE_TIME_MILLIS = 5L * 60 * 1000
+    internal const val BROWSER_HISTORY_DEFAULT_LIFE_TIME_MILLIS =
+        30L * 24 * 60 * 60 * 1000
     internal const val APPCONTEXT_ACTION_KEY = "action"
     internal const val APPCONTEXT_ACTION_UPSERT = "upsert"
     internal const val APPCONTEXT_ACTION_DELETE = "delete"
