@@ -18,3 +18,12 @@ internal fun normalizeAppContextLifeTime(type: Int, lifeTime: Long?): Long =
         lifeTime <= ProtocolConstants.APPCONTEXT_MAX_LIFE_TIME_MILLIS -> lifeTime
         else -> ProtocolConstants.APPCONTEXT_MAX_LIFE_TIME_MILLIS
     }
+
+internal fun isAppContextExpired(
+    lastUpdatedTime: Long,
+    lifeTime: Long,
+    currentTime: Long,
+): Boolean =
+    lifeTime >= 0 &&
+        lastUpdatedTime <= Long.MAX_VALUE - lifeTime &&
+        lastUpdatedTime + lifeTime < currentTime

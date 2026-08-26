@@ -234,7 +234,7 @@ object AppContextManager : IAppContextManager {
         val lifeTime = appContext.lifeTime
         val currentTime = System.currentTimeMillis()
 
-        if (lifeTime >= 0 && lastUpdatedTime + lifeTime < currentTime) {
+        if (isAppContextExpired(lastUpdatedTime, lifeTime, currentTime)) {
             throw InvalidParameterException(
                 "${ProtocolConstants.APPCONTEXT_LAST_UPDATED_TIME_KEY}:invalid timestamp. " +
                     "The context has already expired (lastUpdatedTime + lifeTime < currentTime). " +

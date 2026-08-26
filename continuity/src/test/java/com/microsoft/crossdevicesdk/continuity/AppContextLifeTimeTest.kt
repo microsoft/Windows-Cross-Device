@@ -6,7 +6,9 @@ package com.microsoft.crossdevicesdk.continuity
 
 import java.security.InvalidParameterException
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AppContextLifeTimeTest {
@@ -48,5 +50,14 @@ class AppContextLifeTimeTest {
         assertEquals(0L, normalizeAppContextLifeTime(type, 0L))
         assertEquals(1L, normalizeAppContextLifeTime(type, 1L))
         assertEquals(overAppContextLimit, normalizeAppContextLifeTime(type, overAppContextLimit))
+        assertEquals(Long.MAX_VALUE, normalizeAppContextLifeTime(type, Long.MAX_VALUE))
+    }
+
+    @Test
+    fun isAppContextExpiredHandlesLifeTimeOverflow() {
+        assertFalse(isAppContextExpired(1L, Long.MAX_VALUE, 2L))
+        assertFalse(isAppContextExpired(1_000L, -1L, 2_001L))
+        assertFalse(isAppContextExpired(1_000L, 1_000L, 2_000L))
+        assertTrue(isAppContextExpired(1_000L, 1_000L, 2_001L))
     }
 }
