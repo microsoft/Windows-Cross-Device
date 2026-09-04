@@ -151,6 +151,25 @@ class AppContext {
         }
 
     /**
+     * The download URL of the PC app on the desktop, used when the app is not available in the store.
+     *
+     * This is optional. Must be http:// or https:// based URI.
+     * @throws IllegalArgumentException if the pc app download url exceeds 2083 characters
+     */
+    var pcAppDownloadUrl: String
+        get() {
+            return values[ProtocolConstants.APPCONTEXT_PC_APP_DOWNLOAD_URL_KEY]?.toString() ?: ""
+        }
+        set(pcAppDownloadUrl) {
+            if (pcAppDownloadUrl.length > ProtocolConstants.MAX_URI_LENGTH) {
+                throw IllegalArgumentException(
+                    "pcAppDownloadUrl exceeds the maximum length of 2083 characters"
+                )
+            }
+            values[ProtocolConstants.APPCONTEXT_PC_APP_DOWNLOAD_URL_KEY] = pcAppDownloadUrl
+        }
+
+    /**
      * Preview image bytes that can represent the app context.
      *
      * This is optional.
